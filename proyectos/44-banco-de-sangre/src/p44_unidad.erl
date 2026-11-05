@@ -53,6 +53,7 @@ init(#{id := Id} = Datos0) ->
   %% Grupo por lote: así un refrigerador encuentra a las unidades de su lote sin
   %% recorrer todas. pg quita solo a los procesos que mueren; al reiniciarse se re-une.
   ok = pg:join(p44_pg, {lote, maps:get(lote, Datos, sin_lote)}, self()),
+  ok = pg:join(p44_pg, {donante, maps:get(donante, Datos, sin_donante)}, self()),
   notificar(Estado, Datos),
   {ok, Estado, Datos, acciones_iniciales(Estado, Datos)}.
 

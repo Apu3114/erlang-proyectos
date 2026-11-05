@@ -5,7 +5,7 @@
 -module(p44_bitacora).
 -behaviour(gen_server).
 
--export([start_link/0, registrar/2, historial/1]).
+-export([start_link/0, registrar/2, historial/1, unidades/0, refrigeradores/0]).
 -export([init/1, handle_call/3, handle_cast/2]).
 
 -define(TABLA, p44_bitacora).
@@ -22,6 +22,16 @@ registrar(Id, Evento) when is_map(Evento) ->
 %% Devuelve [{MarcaDeTiempoMs, Evento}] en orden cronológico.
 historial(Id) ->
   ets:select(?TABLA, [{{{Id, '_'}, '$1', '$2'}, [], [{{'$1', '$2'}}]}]).
+
+%% Datos de todas las unidades que alguna vez se crearon (para repoblar tras una caída).
+unidades() ->
+  ets:select(?TABLA, [{{{'$1', '_'}, '_', #{evento => creada, datos => '$2'}},
+                       [{is_integer, '$1'}], ['$2']}]).
+
+%% [{IdRefrigerador, Lote}] de todos los refrigeradores creados.
+refrigeradores() ->
+  ets:select(?TABLA, [{{{{refrigerador, '$1'}, '_'}, '_', #{evento => creada, lote => '$2'}},
+                       [], [{{'$1', '$2'}}]}]).
 
 init([]) ->
   ?TABLA = ets:new(?TABLA, [named_table, public, ordered_set, {write_concurrency, true}]),
