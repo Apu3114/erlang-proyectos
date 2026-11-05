@@ -31,6 +31,9 @@ retirar(Id, Motivo) -> llamar(Id, {retirar, Motivo}).
 comprometer(Id) -> llamar(Id, comprometer).
 estado(Id) -> llamar(Id, estado).
 
+%% Se puede llamar por Id o directamente por pid.
+llamar(Pid, Pedido) when is_pid(Pid) ->
+  gen_statem:call(Pid, Pedido);
 llamar(Id, Pedido) ->
   gen_statem:call(nombre(Id), Pedido).
 
@@ -47,6 +50,9 @@ init(#{id := Id} = Datos0) ->
       {E, D} ->
         {E, D}
     end,
+  %% Grupo por lote: así un refrigerador encuentra a las unidades de su lote sin
+  %% recorrer todas. pg quita solo a los procesos que mueren; al reiniciarse se re-une.
+  ok = pg:join(p44_pg, {lote, maps:get(lote, Datos, sin_lote)}, self()),
   notificar(Estado, Datos),
   {ok, Estado, Datos, acciones_iniciales(Estado, Datos)}.
 
