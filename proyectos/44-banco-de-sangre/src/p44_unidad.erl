@@ -47,6 +47,7 @@ init(#{id := Id} = Datos0) ->
       {E, D} ->
         {E, D}
     end,
+  notificar(Estado, Datos),
   {ok, Estado, Datos, acciones_iniciales(Estado, Datos)}.
 
 %% Reconstruye estado y datos desde la bitácora (primer evento = datos base,
@@ -152,7 +153,12 @@ pasar(Nuevo, Datos, Extra, Acciones) ->
                               maps:merge(#{evento => cambio, estado => Nuevo}, Extra)),
   Campos = [solicitante, reserva_hasta, receptor],
   Datos1 = maps:merge(maps:without(Campos, Datos), maps:with(Campos, Extra)),
+  notificar(Nuevo, Datos1),
   {next_state, Nuevo, Datos1, Acciones ++ cierre(Nuevo)}.
+
+%% Avisa al inventario (cast: nunca bloquea, y si el inventario no existe se ignora).
+notificar(Estado, Datos) ->
+  gen_server:cast(p44_inventario, {estado_unidad, Estado, Datos}).
 
 %% En estados finales ya no hace falta vigilar la caducidad.
 cierre(Estado) when Estado =:= disponible; Estado =:= reservada -> [];
