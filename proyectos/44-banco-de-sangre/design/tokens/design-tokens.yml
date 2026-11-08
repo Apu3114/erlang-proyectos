@@ -1,0 +1,228 @@
+---
+name: Clinical Hematology Precision
+colors:
+  surface: '#f8f9ff'
+  surface-dim: '#cbdbf5'
+  surface-bright: '#f8f9ff'
+  surface-container-lowest: '#ffffff'
+  surface-container-low: '#eff4ff'
+  surface-container: '#e5eeff'
+  surface-container-high: '#dce9ff'
+  surface-container-highest: '#d3e4fe'
+  on-surface: '#0b1c30'
+  on-surface-variant: '#59413e'
+  inverse-surface: '#213145'
+  inverse-on-surface: '#eaf1ff'
+  outline: '#8d706d'
+  outline-variant: '#e1bfbb'
+  surface-tint: '#b02d29'
+  primary: '#760009'
+  on-primary: '#ffffff'
+  primary-container: '#991b1b'
+  on-primary-container: '#ffaaa1'
+  inverse-primary: '#ffb4ac'
+  secondary: '#565e74'
+  on-secondary: '#ffffff'
+  secondary-container: '#dae2fd'
+  on-secondary-container: '#5c647a'
+  tertiary: '#003a5b'
+  on-tertiary: '#ffffff'
+  tertiary-container: '#00527e'
+  on-tertiary-container: '#82c6ff'
+  error: '#ba1a1a'
+  on-error: '#ffffff'
+  error-container: '#ffdad6'
+  on-error-container: '#93000a'
+  primary-fixed: '#ffdad6'
+  primary-fixed-dim: '#ffb4ac'
+  on-primary-fixed: '#410002'
+  on-primary-fixed-variant: '#8e1214'
+  secondary-fixed: '#dae2fd'
+  secondary-fixed-dim: '#bec6e0'
+  on-secondary-fixed: '#131b2e'
+  on-secondary-fixed-variant: '#3f465c'
+  tertiary-fixed: '#cce5ff'
+  tertiary-fixed-dim: '#93ccff'
+  on-tertiary-fixed: '#001d31'
+  on-tertiary-fixed-variant: '#004b73'
+  background: '#f8f9ff'
+  on-background: '#0b1c30'
+  surface-variant: '#d3e4fe'
+typography:
+  headline-lg:
+    fontFamily: Hanken Grotesk
+    fontSize: 28px
+    fontWeight: '700'
+    lineHeight: 34px
+    letterSpacing: -0.02em
+  headline-lg-mobile:
+    fontFamily: Hanken Grotesk
+    fontSize: 24px
+    fontWeight: '700'
+    lineHeight: 30px
+    letterSpacing: -0.02em
+  headline-md:
+    fontFamily: Hanken Grotesk
+    fontSize: 20px
+    fontWeight: '600'
+    lineHeight: 26px
+    letterSpacing: -0.01em
+  headline-sm:
+    fontFamily: Hanken Grotesk
+    fontSize: 17px
+    fontWeight: '600'
+    lineHeight: 22px
+    letterSpacing: 0em
+  body-lg:
+    fontFamily: Hanken Grotesk
+    fontSize: 16px
+    fontWeight: '400'
+    lineHeight: 24px
+  body-md:
+    fontFamily: Hanken Grotesk
+    fontSize: 14px
+    fontWeight: '400'
+    lineHeight: 20px
+  body-sm:
+    fontFamily: Hanken Grotesk
+    fontSize: 13px
+    fontWeight: '400'
+    lineHeight: 18px
+  label-blood-group:
+    fontFamily: Hanken Grotesk
+    fontSize: 22px
+    fontWeight: '800'
+    lineHeight: 24px
+    letterSpacing: -0.01em
+  label-mono-lg:
+    fontFamily: JetBrains Mono
+    fontSize: 15px
+    fontWeight: '600'
+    lineHeight: 20px
+    letterSpacing: -0.01em
+  label-mono-sm:
+    fontFamily: JetBrains Mono
+    fontSize: 12px
+    fontWeight: '500'
+    lineHeight: 16px
+    letterSpacing: 0.02em
+  label-badge:
+    fontFamily: Hanken Grotesk
+    fontSize: 11px
+    fontWeight: '700'
+    lineHeight: 14px
+    letterSpacing: 0.04em
+rounded:
+  sm: 0.125rem
+  DEFAULT: 0.25rem
+  md: 0.375rem
+  lg: 0.5rem
+  xl: 0.75rem
+  full: 9999px
+spacing:
+  gutter: 1rem
+  gutter-sm: 0.75rem
+  margin: 1rem
+  margin-mobile: 1rem
+  space-xs: 0.25rem
+  space-sm: 0.5rem
+  space-md: 0.75rem
+  space-lg: 1rem
+  space-xl: 1.5rem
+---
+
+## Brand & Style
+
+This design system is engineered for critical mobile operations in clinical laboratories, hospital transfusion centers, and emergency triage stations. The aesthetic is utilitarian, hyper-legible, and clinically pristine. It rejects decorative embellishments, heavy skeumorphism, and nested card borders in favor of structural grid discipline, high contrast, and rapid optical parsing under harsh fluorescent or low-light hospital conditions.
+
+The visual style leans on **High-Precision Clinical Modernism**:
+- Zero superfluous visual noise: information density is balanced by systematic spacing rather than borders or floating surfaces.
+- High-contrast chromatic signals ensure immediate triage decisions (e.g., reserve shortages, expired units, emergent demand).
+- Blood group designations (`O-`, `AB+`, `A-`) are elevated to distinct visual anchors with unambiguous typographic hierarchy.
+- Tone is institutional, authoritative, reliable, and calm under high-pressure workflows.
+
+## Colors
+
+The palette is tuned specifically for instant clinical legibility and safety-critical color feedback:
+
+- **Primary (`#991B1B` Deep Blood Crimson)**: Serves as the primary operational hue, header branding, and critical blood asset identification. Secondary primary tier `#B91C1C` handles active interaction states and major action triggers.
+- **Secondary (`#0F172A` Deep Slate)**: Used for primary typography, icons, and high-emphasis structural markers.
+- **Canvas & Neutrals**:
+  - Base background: `#F8FAFC` (Slate 50), preventing the eye fatigue of sterile pure white across long shifts.
+  - Surface high: `#FFFFFF` for primary rows and interactive touch panels.
+  - Surface divider / border: `#E2E8F0` (Slate 200) strictly for hairline rules (`1px`).
+  - Text Muted / Metadata: `#64748B` (Slate 500).
+- **Clinical Semantic States**:
+  - **OK / Suficiente**: `#059669` (Emerald 600) on `#ECFDF5` (Emerald 50) background. Indicates reserve stability (>5 days operational supply).
+  - **Alerta / Crítico**: `#D97706` (Amber 600) on `#FFFBEB` (Amber 50) background. Indicates reserves below safe thresholds (<48h reserve).
+  - **Falla / Urgencia Inmediata**: `#DC2626` (Red 600) on `#FEF2F2` (Red 50) background. Triggers urgent call-to-actions, incompatible cross-matches, or zero inventory.
+
+## Typography
+
+Typography is paired to separate prose/clinical notes from strict quantitative inventory metrics:
+
+- **Hanken Grotesk**: Delivers razor-sharp geometry, high x-height, and neutral precision for headers, clinical names, and blood type markers.
+- **JetBrains Mono**: Used for blood bag ISBT 128 barcodes, lot IDs, volumetric counters (`450 mL`, `12 U`), expiry timestamps, and refrigerated unit coordinates. Monospaced tabular alignment guarantees numbers do not jitter during real-time status refreshes.
+- Blood group tokens (`O-`, `A+`, `AB+`) must always be styled using `label-blood-group` with tabular figure variants enabled to maintain vertical alignment across multi-row tables.
+
+## Layout & Spacing
+
+This layout adheres strictly to an edge-anchored mobile framework optimized for single-hand viewport usage (~390px base width, expanding cleanly to larger handheld terminals):
+
+- **Grid Discipline**: Standard 4-column layout on mobile devices with `gutter-sm` (12px) and canvas `margin` (16px).
+- **Anti-Nesting Policy**: Avoid cards inside cards. Hierarchies are delineated using structural `space-lg` separation and 1px hairline dividers (`#E2E8F0`), maintaining maximum vertical scanning velocity.
+- **Touch Target Safeguards**: All clickable action rows, dispatch toggles, and verification checkboxes must maintain an absolute minimum height of 48px, with interactive row padding governed by `space-md` (vertical) and `space-lg` (horizontal).
+- **Data Scannability**: Multi-column key-value metrics use fixed 8px gaps (`space-sm`) to tightly link data labels (`LOT #`, `UNITS`, `EXP`) to their corresponding values.
+
+## Elevation & Depth
+
+To maintain absolute diagnostic clarity in high-stress medical environments, this design system uses **flat, outline-driven tonal tiers** rather than heavy ambient or drop shadows:
+
+- **Surface Levels**:
+  - `Level 0 (Canvas)`: Flat `#F8FAFC`.
+  - `Level 1 (Clinical Sheet)`: Flat `#FFFFFF` backed by a 1px solid `#E2E8F0` border.
+  - `Level 2 (Active/Selected Row)`: Tinted `#F1F5F9` surface with a 2px left border accent in `#991B1B` or the corresponding semantic status color.
+  - `Level 3 (Modal / Critical Tray)`: `#FFFFFF` with a single high-restraint ambient boundary: `0 8px 24px -4px rgba(15, 23, 42, 0.08)` and a 1px border of `#CBD5E1`.
+- **Contrast Rule**: Shadows are never used to communicate state or priority; only border tone, semantic badge fill, and text weight communicate operational precedence.
+
+## Shapes
+
+The shape system adopts a **Soft / Controlled Radius** aesthetic (`roundedness: 1`):
+
+- **Base Radius (`0.25rem` / 4px)**: Applied to blood type identification plates, data badges, barcode container chips, and form input frames. Reflects high-precision lab instruments.
+- **Container Radius (`0.5rem` / 8px)**: Applied to sheet wrappers, inventory tables, and floating action alerts.
+- **Pill Exceptions (`9999px`)**: Reserved exclusively for clinical triage status pills (`OK`, `ALERTA`, `URGENTE`) to visually differentiate system status flags from data containers and action triggers.
+
+## Components
+
+### Buttons
+- **Primary Operational (`#991B1B`)**: Solid blood crimson background, `#FFFFFF` text (`Hanken Grotesk`, 600 weight). 48px height, 4px border radius. Hover/press state shifts to `#7F1D1D`.
+- **Secondary Critical Action (`#0F172A`)**: Solid slate background, `#FFFFFF` text. Used for confirmation steps like verification scans and sign-offs.
+- **Outlined Utility**: Transparent background, 1px `#CBD5E1` border, `#0F172A` text.
+- **Destructive / Emergency Callout**: `#FEF2F2` background, 1px solid `#DC2626` border, `#DC2626` bold text.
+
+### Blood Group Badges (High-Contrast Anchors)
+- 40x40px or 48x48px square plates with 4px border radius.
+- Universal Donors (`O-`): Inverted `#991B1B` deep crimson plate with high-contrast `#FFFFFF` text to immediately draw medical eyes during hemotransfusion emergencies.
+- Standard Types (`A+`, `B+`, etc.): `#FFFFFF` surface with a 1.5px `#94A3B8` border and `#0F172A` bold typography.
+
+### Clinical Status Chips
+- Pill-shaped (`9999px`), uppercase `label-badge` font with a leading 6px colored dot:
+  - **Suficiente**: `#ECFDF5` background, `#059669` text, green dot.
+  - **Crítico**: `#FFFBEB` background, `#D97706` text, amber dot.
+  - **Urgencia Inmediata**: `#FEF2F2` background, `#DC2626` text, pulsing red dot.
+
+### Inventory List Rows (Anti-Card Pattern)
+- No individual card wrappers. All units or blood types sit in continuous lists over `#FFFFFF` separated by 1px `#E2E8F0` dividers.
+- Left column: Blood type badge.
+- Center column: Component designation (e.g., *Concentrado de Eritrocitos*, *Plaquetas*), Lot ID in JetBrains Mono.
+- Right column: Reserve volume in mL and unit quantity in high-contrast bold font, stacked over the semantic status chip.
+
+### Input Fields & Barcode Verification
+- Single-line 48px height, white background, 1px solid `#CBD5E1` border.
+- Focused state: 1.5px solid `#0F172A` outline (avoids ambiguous colored rings).
+- Dedicated scanner slot: JetBrains Mono text format with automatic validation prefix indicators (`ISBT 128` format).
+
+### Checkboxes & Selection Controls
+- Checkbox size: 20x20px with 3px border radius.
+- Border: 1.5px `#64748B`; checked state: solid `#991B1B` with white checkmark icon. High contrast ensures no confusion during rapid double-check verification procedures.

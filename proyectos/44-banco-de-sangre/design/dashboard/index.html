@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Banco de Sangre - Panel de Control Clínico</title>
+<!-- Material Symbols Outlined -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Typography: Hanken Grotesk & JetBrains Mono -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS v3 -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#3f465c",
+            "secondary": "#565e74",
+            "secondary-container": "#dae2fd",
+            "surface-container-highest": "#d3e4fe",
+            "on-primary-container": "#ffaaa1",
+            "primary-fixed-dim": "#ffb4ac",
+            "on-error-container": "#93000a",
+            "on-primary": "#ffffff",
+            "inverse-surface": "#213145",
+            "tertiary-fixed-dim": "#93ccff",
+            "surface-container": "#e5eeff",
+            "on-primary-fixed-variant": "#8e1214",
+            "on-secondary": "#ffffff",
+            "inverse-primary": "#ffb4ac",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-fixed-variant": "#004b73",
+            "tertiary-fixed": "#cce5ff",
+            "on-tertiary": "#ffffff",
+            "surface-dim": "#cbdbf5",
+            "on-background": "#0b1c30",
+            "outline": "#8d706d",
+            "surface-container-low": "#eff4ff",
+            "outline-variant": "#e1bfbb",
+            "error-container": "#ffdad6",
+            "inverse-on-surface": "#eaf1ff",
+            "on-secondary-fixed": "#131b2e",
+            "on-error": "#ffffff",
+            "primary-fixed": "#ffdad6",
+            "error": "#ba1a1a",
+            "surface-tint": "#b02d29",
+            "surface-container-high": "#dce9ff",
+            "tertiary": "#003a5b",
+            "tertiary-container": "#00527e",
+            "on-tertiary-fixed": "#001d31",
+            "surface-variant": "#d3e4fe",
+            "on-surface-variant": "#59413e",
+            "primary-container": "#991b1b",
+            "background": "#f8f9ff",
+            "secondary-fixed": "#dae2fd",
+            "secondary-fixed-dim": "#bec6e0",
+            "on-secondary-container": "#5c647a",
+            "on-tertiary-container": "#82c6ff",
+            "primary": "#760009",
+            "surface-bright": "#f8f9ff",
+            "on-primary-fixed": "#410002",
+            "on-surface": "#0b1c30",
+            "surface": "#f8f9ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-lg": "1rem",
+            "space-md": "0.75rem",
+            "space-xs": "0.25rem",
+            "margin": "1rem",
+            "space-sm": "0.5rem",
+            "margin-mobile": "1rem",
+            "gutter": "1rem",
+            "space-xl": "1.5rem",
+            "gutter-sm": "0.75rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Hanken Grotesk"],
+            "headline-md": ["Hanken Grotesk"],
+            "label-badge": ["Hanken Grotesk"],
+            "headline-lg-mobile": ["Hanken Grotesk"],
+            "headline-sm": ["Hanken Grotesk"],
+            "body-lg": ["Hanken Grotesk"],
+            "headline-lg": ["Hanken Grotesk"],
+            "body-md": ["Hanken Grotesk"],
+            "label-mono-lg": ["JetBrains Mono"],
+            "label-blood-group": ["Hanken Grotesk"],
+            "label-mono-sm": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-badge": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-sm": ["17px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-lg": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-mono-lg": ["15px", { "lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-blood-group": ["22px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+            "label-mono-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="bg-background text-on-surface min-h-full font-body-md text-body-md antialiased selection:bg-error selection:text-on-error">
+<!-- Mobile Screen Container (390px base viewport, centered) -->
+<div class="max-w-md mx-auto min-h-screen bg-surface flex flex-col relative pb-20 shadow-none">
+<!-- TOP APP BAR (Shared Component JSON faithfully rendered) -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant dark:border-outline sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-4 h-14 max-w-md mx-auto">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary text-xl" data-icon="local_hospital">local_hospital</span>
+<span class="text-headline-sm font-headline-sm font-bold text-primary dark:text-inverse-primary tracking-tight">Banco de Sangre</span>
+</div>
+<button aria-label="Alerta de Emergencia" class="p-1.5 text-primary dark:text-inverse-primary hover:bg-surface-container dark:hover:bg-surface-dim active:opacity-80 transition-opacity rounded" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="emergency" data-weight="fill">emergency</span>
+</button>
+</div>
+</header>
+<!-- METADATA & LOCATION BAR (Clinical Context) -->
+<section class="bg-surface-container-lowest border-b border-outline-variant px-4 py-2 flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+<span class="text-body-sm font-body-sm text-secondary font-medium">Sincronización en vivo: <span class="font-label-mono-sm text-label-mono-sm text-on-surface">14:28:09</span></span>
+</div>
+<div class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="apartment">apartment</span>
+<select class="bg-transparent text-body-sm font-body-sm text-on-surface font-semibold border-none py-0 pl-1 pr-6 focus:ring-0 cursor-pointer">
+<option selected="">Sede Central (Trauma Nivel 1)</option>
+<option>Pabellón Materno-Infantil</option>
+<option>Unidad Móvil de Campaña</option>
+</select>
+</div>
+</section>
+<!-- CRITICAL DISPATCH ACTION (Top Clinical Access) -->
+<section class="px-4 pt-3 pb-1">
+<button class="w-full h-12 bg-primary-container text-on-primary font-headline-sm text-headline-sm font-semibold rounded flex items-center justify-center space-x-2 shadow-none hover:bg-primary active:opacity-90 transition-colors">
+<span class="material-symbols-outlined text-xl animate-pulse" data-icon="e911_emergency" data-weight="fill">e911_emergency</span>
+<span class="tracking-wide">Despacho de Emergencia / Código Rojo</span>
+</button>
+</section>
+<!-- OPERATIONAL STATUS HERO BANNER -->
+<section class="px-4 py-3">
+<div class="bg-surface-container-lowest border border-outline-variant p-3">
+<div class="flex items-center justify-between mb-1.5">
+<span class="text-label-badge font-label-badge text-secondary uppercase tracking-wider">Estado Operativo General</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-badge font-label-badge bg-amber-50 text-amber-800 border border-amber-300">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500 mr-1.5"></span>Alerta en O-
+          </span>
+</div>
+<div class="flex items-baseline space-x-2">
+<span class="text-headline-lg-mobile font-headline-lg-mobile font-bold text-on-surface">84%</span>
+<span class="text-body-sm font-body-sm text-secondary">Capacidad Operativa Global</span>
+</div>
+<!-- Progress bar minimal clinical -->
+<div class="w-full bg-surface-container-high h-2 mt-2 rounded-none overflow-hidden">
+<div class="bg-on-surface h-2 transition-all duration-300" style="width: 84%"></div>
+</div>
+</div>
+</section>
+<!-- KEY METRICS ROW (Clean Flat 3-Column Grid) -->
+<section class="px-4 py-1">
+<div class="grid grid-cols-3 gap-2 bg-surface-container-lowest border border-outline-variant p-3 text-center">
+<!-- Metric 1 -->
+<div class="flex flex-col items-center">
+<span class="text-label-badge font-label-badge text-secondary uppercase">Totales</span>
+<span class="text-headline-md font-headline-md font-bold text-on-surface mt-0.5">412</span>
+<span class="text-body-sm font-body-sm text-secondary font-label-mono-sm">bolsas</span>
+</div>
+<!-- Metric 2 (Amber Alert) -->
+<div class="flex flex-col items-center border-l border-r border-outline-variant px-1">
+<span class="text-label-badge font-label-badge text-secondary uppercase">Caducan &lt;48h</span>
+<span class="text-headline-md font-headline-md font-bold text-amber-700 mt-0.5">9</span>
+<span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-bold bg-amber-100 text-amber-900 border border-amber-300">
+            Pre-crítico
+          </span>
+</div>
+<!-- Metric 3 (Red Code) -->
+<div class="flex flex-col items-center">
+<span class="text-label-badge font-label-badge text-secondary uppercase">Código Rojo</span>
+<span class="text-headline-md font-headline-md font-bold text-primary-container mt-0.5">1</span>
+<span class="inline-flex items-center px-1.5 py-0.2 rounded text-[10px] font-bold bg-red-100 text-red-900 border border-red-300">
+            Activo
+          </span>
+</div>
+</div>
+</section>
+<!-- BLOOD GROUP RESERVES SECTION (Clinical Flat List) -->
+<section class="px-4 pt-4">
+<div class="flex items-center justify-between pb-2 border-b border-outline-variant">
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface uppercase tracking-tight">Nivel de Reservas por Grupo</h2>
+<span class="text-label-badge font-label-badge text-secondary font-mono">ISBT-128</span>
+</div>
+<!-- Inventory Continuous List -->
+<div class="bg-surface-container-lowest border-b border-outline-variant divide-y divide-outline-variant">
+<!-- O- Universal Donor (CRITICAL) -->
+<div class="py-3 px-1 flex items-center justify-between bg-red-50/40 border-l-4 border-l-red-600">
+<div class="flex items-center space-x-3 pl-2">
+<!-- Blood Type Plate -->
+<div class="w-10 h-10 bg-primary-container flex items-center justify-center rounded">
+<span class="text-label-blood-group font-label-blood-group text-on-primary">O-</span>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<span class="text-body-md font-body-md font-bold text-on-surface">Universal Donante</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-badge font-label-badge bg-red-100 text-red-700">
+<span class="w-1.5 h-1.5 rounded-full bg-red-600 mr-1 animate-ping"></span>Urgente
+                </span>
+</div>
+<div class="text-label-mono-sm font-label-mono-sm text-secondary">Vol: 3.600 mL disp.</div>
+</div>
+</div>
+<div class="text-right pr-2">
+<div class="text-headline-sm font-headline-sm font-bold text-red-700">8 <span class="text-body-sm font-body-sm font-normal text-secondary">uds</span></div>
+<div class="w-20 bg-surface-container-high h-1.5 mt-1 rounded-none overflow-hidden">
+<div class="bg-red-600 h-1.5" style="width: 18%"></div>
+</div>
+<span class="text-[10px] font-label-mono-sm text-red-700 font-bold">18% mín</span>
+</div>
+</div>
+<!-- O+ (OPTIMAL) -->
+<div class="py-3 px-1 flex items-center justify-between hover:bg-surface-container-low transition-colors">
+<div class="flex items-center space-x-3 pl-2">
+<div class="w-10 h-10 bg-surface-container-lowest border-2 border-secondary flex items-center justify-center rounded">
+<span class="text-label-blood-group font-label-blood-group text-on-surface">O+</span>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<span class="text-body-md font-body-md font-semibold text-on-surface">Común Positivo</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-badge font-label-badge bg-emerald-100 text-emerald-800">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 mr-1"></span>Suficiente
+                </span>
+</div>
+<div class="text-label-mono-sm font-label-mono-sm text-secondary">Vol: 63.900 mL disp.</div>
+</div>
+</div>
+<div class="text-right pr-2">
+<div class="text-headline-sm font-headline-sm font-bold text-on-surface">142 <span class="text-body-sm font-body-sm font-normal text-secondary">uds</span></div>
+<div class="w-20 bg-surface-container-high h-1.5 mt-1 rounded-none overflow-hidden">
+<div class="bg-emerald-600 h-1.5" style="width: 75%"></div>
+</div>
+<span class="text-[10px] font-label-mono-sm text-secondary font-semibold">75% cap</span>
+</div>
+</div>
+<!-- A+ (OPTIMAL) -->
+<div class="py-3 px-1 flex items-center justify-between hover:bg-surface-container-low transition-colors">
+<div class="flex items-center space-x-3 pl-2">
+<div class="w-10 h-10 bg-surface-container-lowest border-2 border-secondary flex items-center justify-center rounded">
+<span class="text-label-blood-group font-label-blood-group text-on-surface">A+</span>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<span class="text-body-md font-body-md font-semibold text-on-surface">Grupo A Primario</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-badge font-label-badge bg-emerald-100 text-emerald-800">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600 mr-1"></span>Suficiente
+                </span>
+</div>
+<div class="text-label-mono-sm font-label-mono-sm text-secondary">Vol: 44.100 mL disp.</div>
+</div>
+</div>
+<div class="text-right pr-2">
+<div class="text-headline-sm font-headline-sm font-bold text-on-surface">98 <span class="text-body-sm font-body-sm font-normal text-secondary">uds</span></div>
+<div class="w-20 bg-surface-container-high h-1.5 mt-1 rounded-none overflow-hidden">
+<div class="bg-emerald-600 h-1.5" style="width: 68%"></div>
+</div>
+<span class="text-[10px] font-label-mono-sm text-secondary font-semibold">68% cap</span>
+</div>
+</div>
+<!-- A- (PREVENTIVE ALERT) -->
+<div class="py-3 px-1 flex items-center justify-between bg-amber-50/30 border-l-4 border-l-amber-500">
+<div class="flex items-center space-x-3 pl-2">
+<div class="w-10 h-10 bg-surface-container-lowest border-2 border-amber-600 flex items-center justify-center rounded">
+<span class="text-label-blood-group font-label-blood-group text-amber-800">A-</span>
+</div>
+<div>
+<div class="flex items-center space-x-2">
+<span class="text-body-md font-body-md font-semibold text-on-surface">Grupo A Negativo</span>
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-badge font-label-badge bg-amber-100 text-amber-900">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-600 mr-1"></span>Crítico
+                </span>
+</div>
+<div class="text-label-mono-sm font-label-mono-sm text-secondary">Vol: 6.300 mL disp.</div>
+</div>
+</div>
+<div class="text-right pr-2">
+<div class="text-headline-sm font-headline-sm font-bold text-amber-800">14 <span class="text-body-sm font-body-sm font-normal text-secondary">uds</span></div>
+<div class="w-20 bg-surface-container-high h-1.5 mt-1 rounded-none overflow-hidden">
+<div class="bg-amber-500 h-1.5" style="width: 32%"></div>
+</div>
+<span class="text-[10px] font-label-mono-sm text-amber-800 font-bold">32% mód</span>
+</div>
+</div>
+</div>
+<!-- COMPACT ROW FOR SECONDARY GROUPS (B+, B-, AB+, AB-) -->
+<div class="grid grid-cols-4 gap-1.5 py-2.5 bg-surface-container-lowest px-2 border-b border-outline-variant text-center">
+<!-- B+ -->
+<div class="border border-outline-variant py-1.5 px-1 bg-surface-bright">
+<div class="font-label-blood-group text-sm font-bold text-on-surface">B+</div>
+<div class="font-label-mono-sm text-xs font-bold text-on-surface mt-0.5">54 uds</div>
+<div class="text-[10px] text-emerald-700 font-medium">58% OK</div>
+</div>
+<!-- B- -->
+<div class="border border-outline-variant py-1.5 px-1 bg-surface-bright">
+<div class="font-label-blood-group text-sm font-bold text-on-surface">B-</div>
+<div class="font-label-mono-sm text-xs font-bold text-on-surface mt-0.5">18 uds</div>
+<div class="text-[10px] text-emerald-700 font-medium">42% OK</div>
+</div>
+<!-- AB+ -->
+<div class="border border-outline-variant py-1.5 px-1 bg-surface-bright">
+<div class="font-label-blood-group text-sm font-bold text-on-surface">AB+</div>
+<div class="font-label-mono-sm text-xs font-bold text-on-surface mt-0.5">38 uds</div>
+<div class="text-[10px] text-emerald-700 font-medium">65% OK</div>
+</div>
+<!-- AB- -->
+<div class="border border-outline-variant py-1.5 px-1 bg-surface-bright">
+<div class="font-label-blood-group text-sm font-bold text-on-surface">AB-</div>
+<div class="font-label-mono-sm text-xs font-bold text-amber-800 mt-0.5">8 uds</div>
+<div class="text-[10px] text-amber-700 font-bold">22% Alerta</div>
+</div>
+</div>
+</section>
+<!-- IMMINENT EXPIRATION ALERTS SECTION (<72h) -->
+<section class="px-4 pt-4 pb-6">
+<div class="flex items-center justify-between pb-2 border-b border-outline-variant">
+<div class="flex items-center space-x-1.5">
+<span class="material-symbols-outlined text-amber-700 text-lg" data-icon="timer">timer</span>
+<h2 class="text-headline-sm font-headline-sm font-bold text-on-surface uppercase tracking-tight">Alertas de Caducidad (&lt;72h)</h2>
+</div>
+<span class="text-label-badge font-label-badge text-amber-900 bg-amber-100 px-2 py-0.5 rounded">2 Lotes</span>
+</div>
+<div class="bg-surface-container-lowest border-b border-outline-variant divide-y divide-outline-variant">
+<!-- Batch Alert 1: Platelets -->
+<div class="py-3 px-2 flex items-start justify-between">
+<div>
+<div class="flex items-center space-x-2">
+<span class="text-body-md font-body-md font-bold text-on-surface">Concentrado de Plaquetas</span>
+<span class="px-1.5 py-0.5 text-[10px] font-bold bg-surface-container-high text-on-surface border border-outline-variant">A+</span>
+</div>
+<div class="text-label-mono-sm font-label-mono-sm text-secondary mt-0.5">
+              Lote: <span class="text-on-surface font-semibold">PLQ-8921</span> | Temp: <span class="text-on-surface font-semibold">22°C Agit.</span>
+</div>
+<div class="text-body-sm font-body-sm text-secondary">Almacén: Incubador 02 - Bandeja B</div>
+</div>
+<div class="text-right flex flex-col items-end">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-badge font-label-badge bg-red-100 text-red-700 mb-1 border border-red-300">
+<span class="w-1.5 h-1.5 rounded-full bg-red-600 mr-1 animate-pulse"></span>Vence en 14h
+            </span>
+<button class="text-body-sm font-body-sm font-semibold text-primary hover:underline flex items-center pt-1">
+              Despachar <span class="material-symbols-outlined text-sm ml-0.5" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+<!-- Batch Alert 2: Packed Red Blood Cells -->
+<div class="py-3 px-2 flex items-start justify-between">
+<div>
+<div class="flex items-center space-x-2">
+<span class="text-body-md font-body-md font-bold text-on-surface">Glóbulos Rojos Empacados</span>
+<span class="px-1.5 py-0.5 text-[10px] font-bold bg-primary-container text-on-primary">O-</span>
+</div>
+<div class="text-label-mono-sm font-label-mono-sm text-secondary mt-0.5">
+              Lote: <span class="text-on-surface font-semibold">GRE-4402</span> | Temp: <span class="text-on-surface font-semibold">4.1°C</span>
+</div>
+<div class="text-body-sm font-body-sm text-secondary">Cámara Fría 01 - Rack Hemoderivados</div>
+</div>
+<div class="text-right flex flex-col items-end">
+<span class="inline-flex items-center px-2 py-0.5 rounded-full text-label-badge font-label-badge bg-amber-100 text-amber-900 mb-1 border border-amber-300">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-600 mr-1"></span>Vence en 38h
+            </span>
+<button class="text-body-sm font-body-sm font-semibold text-primary hover:underline flex items-center pt-1">
+              Despachar <span class="material-symbols-outlined text-sm ml-0.5" data-icon="chevron_right">chevron_right</span>
+</button>
+</div>
+</div>
+</div>
+</section>
+<!-- BOTTOM NAVIGATION BAR (Shared Component JSON faithfully rendered) -->
+<!-- The user explicitly requested 'Reservas' active -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-2 bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant dark:border-outline max-w-md mx-auto right-0">
+<!-- Tab 1: Reservas (ACTIVE STATE per hierarchy and JSON rules) -->
+<a class="flex flex-col items-center justify-center text-primary dark:text-inverse-primary font-bold py-1 px-3 border-t-2 border-primary dark:border-inverse-primary hover:bg-surface-container-low dark:hover:bg-surface-dim transition-colors active:scale-95 transition-transform duration-100 flex-1" href="#reservas">
+<span class="material-symbols-outlined text-2xl" data-icon="inventory_2" data-weight="fill">inventory_2</span>
+<span class="text-label-badge font-label-badge uppercase tracking-wider mt-0.5">Reservas</span>
+</a>
+<!-- Tab 2: Procesos (INACTIVE STATE) -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim py-1 px-3 hover:bg-surface-container-low dark:hover:bg-surface-dim transition-colors active:scale-95 transition-transform duration-100 flex-1" href="#procesos">
+<span class="material-symbols-outlined text-2xl" data-icon="fact_check">fact_check</span>
+<span class="text-label-badge font-label-badge uppercase tracking-wider mt-0.5">Procesos</span>
+</a>
+<!-- Tab 3: Bitácora (INACTIVE STATE) -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim py-1 px-3 hover:bg-surface-container-low dark:hover:bg-surface-dim transition-colors active:scale-95 transition-transform duration-100 flex-1" href="#bitacora">
+<span class="material-symbols-outlined text-2xl" data-icon="history_edu">history_edu</span>
+<span class="text-label-badge font-label-badge uppercase tracking-wider mt-0.5">Bitácora</span>
+</a>
+</nav>
+</div>
+</body></html>
