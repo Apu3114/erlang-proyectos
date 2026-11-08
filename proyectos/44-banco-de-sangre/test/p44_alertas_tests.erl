@@ -14,18 +14,24 @@ arrancar() ->
   esperar_sin_arbol(40),
   application:set_env(?APP, umbral_default, 0),
   application:set_env(?APP, umbrales, #{{o_neg, globulos_rojos} => 2}),
+  %% Bitacora en un DETS temporal propio de esta suite (ver nota en los demas tests).
+  Ruta = "/tmp/p44_dets_test_" ++ integer_to_list(erlang:unique_integer([positive])) ++ "/",
+  application:set_env(?APP, dets_path, Ruta ++ "bitacora.dets"),
   {ok, Pid} = p44_banco_de_sangre_sup:start_link(),
-  Pid.
+  {Pid, Ruta}.
 
-detener(Pid) ->
+detener({Pid, Ruta}) ->
   application:unset_env(?APP, umbral_default),
   application:unset_env(?APP, umbrales),
+  application:unset_env(?APP, dets_path),
   Ref = monitor(process, Pid),
   unlink(Pid),
   exit(Pid, shutdown),
   receive {'DOWN', Ref, process, Pid, _} -> ok
   after 5000 -> error(arbol_no_cerro)
-  end.
+  end,
+  _ = file:del_dir_r(Ruta),
+  ok.
 
 esperar_sin_arbol(0) -> error(arbol_anterior_sigue_vivo);
 esperar_sin_arbol(N) ->

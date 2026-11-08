@@ -8,16 +8,24 @@ caos_test_() ->
 
 arrancar() ->
   esperar_sin_arbol(40),
+  %% Bitacora en un DETS temporal propio de esta suite: la persistencia real es
+  %% entre reinicios del NODO, no debe filtrarse entre modulos de prueba que
+  %% reutilizan los mismos ids numericos.
+  Ruta = "/tmp/p44_dets_test_" ++ integer_to_list(erlang:unique_integer([positive])) ++ "/",
+  application:set_env(p44_banco_de_sangre, dets_path, Ruta ++ "bitacora.dets"),
   {ok, Pid} = p44_banco_de_sangre_sup:start_link(),
-  Pid.
+  {Pid, Ruta}.
 
-detener(Pid) ->
+detener({Pid, Ruta}) ->
   Ref = monitor(process, Pid),
   unlink(Pid),
   exit(Pid, shutdown),
   receive {'DOWN', Ref, process, Pid, _} -> ok
   after 5000 -> error(arbol_no_cerro)
-  end.
+  end,
+  application:unset_env(p44_banco_de_sangre, dets_path),
+  _ = file:del_dir_r(Ruta),
+  ok.
 
 esperar_sin_arbol(0) -> error(arbol_anterior_sigue_vivo);
 esperar_sin_arbol(N) ->
