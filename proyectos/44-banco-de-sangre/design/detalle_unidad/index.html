@@ -1,0 +1,367 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Banco de Sangre - Validación y Liberación</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,300..900;1,300..900&amp;family=JetBrains+Mono:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind Script -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#3f465c",
+            "secondary": "#565e74",
+            "secondary-container": "#dae2fd",
+            "surface-container-highest": "#d3e4fe",
+            "on-primary-container": "#ffaaa1",
+            "primary-fixed-dim": "#ffb4ac",
+            "on-error-container": "#93000a",
+            "on-primary": "#ffffff",
+            "inverse-surface": "#213145",
+            "tertiary-fixed-dim": "#93ccff",
+            "surface-container": "#e5eeff",
+            "on-primary-fixed-variant": "#8e1214",
+            "on-secondary": "#ffffff",
+            "inverse-primary": "#ffb4ac",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-fixed-variant": "#004b73",
+            "tertiary-fixed": "#cce5ff",
+            "on-tertiary": "#ffffff",
+            "surface-dim": "#cbdbf5",
+            "on-background": "#0b1c30",
+            "outline": "#8d706d",
+            "surface-container-low": "#eff4ff",
+            "outline-variant": "#e1bfbb",
+            "error-container": "#ffdad6",
+            "inverse-on-surface": "#eaf1ff",
+            "on-secondary-fixed": "#131b2e",
+            "on-error": "#ffffff",
+            "primary-fixed": "#ffdad6",
+            "error": "#ba1a1a",
+            "surface-tint": "#b02d29",
+            "surface-container-high": "#dce9ff",
+            "tertiary": "#003a5b",
+            "tertiary-container": "#00527e",
+            "on-tertiary-fixed": "#001d31",
+            "surface-variant": "#d3e4fe",
+            "on-surface-variant": "#59413e",
+            "primary-container": "#991b1b",
+            "background": "#f8f9ff",
+            "secondary-fixed": "#dae2fd",
+            "secondary-fixed-dim": "#bec6e0",
+            "on-secondary-container": "#5c647a",
+            "on-tertiary-container": "#82c6ff",
+            "primary": "#760009",
+            "surface-bright": "#f8f9ff",
+            "on-primary-fixed": "#410002",
+            "on-surface": "#0b1c30",
+            "surface": "#f8f9ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-lg": "1rem",
+            "space-md": "0.75rem",
+            "space-xs": "0.25rem",
+            "margin": "1rem",
+            "space-sm": "0.5rem",
+            "margin-mobile": "1rem",
+            "gutter": "1rem",
+            "space-xl": "1.5rem",
+            "gutter-sm": "0.75rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Hanken Grotesk"],
+            "headline-md": ["Hanken Grotesk"],
+            "label-badge": ["Hanken Grotesk"],
+            "headline-lg-mobile": ["Hanken Grotesk"],
+            "headline-sm": ["Hanken Grotesk"],
+            "body-lg": ["Hanken Grotesk"],
+            "headline-lg": ["Hanken Grotesk"],
+            "body-md": ["Hanken Grotesk"],
+            "label-mono-lg": ["JetBrains Mono"],
+            "label-blood-group": ["Hanken Grotesk"],
+            "label-mono-sm": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "body-sm": ["13px", { "lineHeight": "18px", "fontWeight": "400" }],
+            "headline-md": ["20px", { "lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-badge": ["11px", { "lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700" }],
+            "headline-lg-mobile": ["24px", { "lineHeight": "30px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "headline-sm": ["17px", { "lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600" }],
+            "body-lg": ["16px", { "lineHeight": "24px", "fontWeight": "400" }],
+            "headline-lg": ["28px", { "lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700" }],
+            "body-md": ["14px", { "lineHeight": "20px", "fontWeight": "400" }],
+            "label-mono-lg": ["15px", { "lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "600" }],
+            "label-blood-group": ["22px", { "lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "800" }],
+            "label-mono-sm": ["12px", { "lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500" }]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 500, 'GRAD' 0, 'opsz' 24;
+      font-size: 20px;
+      line-height: 1;
+    }
+    .material-symbols-fill {
+      font-variation-settings: 'FILL' 1, 'wght' 600, 'GRAD' 0, 'opsz' 24;
+    }
+    /* Clinical pulse effect */
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(1.3); }
+    }
+    .pulse-amber {
+      animation: pulse-dot 1.8s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="h-full bg-background text-on-surface antialiased flex flex-col justify-between items-center selection:bg-primary selection:text-on-primary">
+<!-- Mobile Viewport Container (Edge Anchored ~390px) -->
+<div class="w-full max-w-[390px] min-h-screen bg-background flex flex-col relative pb-28">
+<!-- Top Navigation Header (Shared Anchor Alignment) -->
+<header class="sticky top-0 z-40 bg-surface-container-lowest dark:bg-inverse-surface border-b border-outline-variant/40 px-4 h-14 flex items-center justify-between">
+<div class="flex items-center gap-2">
+<button aria-label="Volver a lista de procesos" class="w-9 h-9 flex items-center justify-center -ml-2 rounded text-secondary hover:bg-surface-container hover:text-on-surface active:opacity-80 transition-colors" type="button">
+<span class="material-symbols-outlined">arrow_back</span>
+</button>
+<div class="flex flex-col">
+<span class="font-headline-sm text-headline-sm tracking-tight text-on-surface font-semibold truncate leading-tight">Validación y Liberación</span>
+<span class="font-label-mono-sm text-label-mono-sm text-secondary">UNIDAD p44_unidad_9041 · estado: reservada</span>
+</div>
+</div>
+<!-- Status Badge Header -->
+<div class="flex items-center gap-1.5 px-2 py-1 rounded-full bg-[#FFFBEB] border border-[#FDE68A]">
+<span class="w-2 h-2 rounded-full bg-[#D97706] pulse-amber"></span>
+<span class="font-label-badge text-label-badge text-[#D97706] tracking-wider uppercase font-bold">En Verificación</span>
+</div>
+</header>
+<!-- Main Content Canvas (Anti-nesting, Flat Clinical Sheet Architecture) -->
+<main class="flex-1 px-4 pt-3.5 space-y-4">
+<!-- Critical Unit Specimen Card -->
+<section class="bg-surface-container-lowest border border-[#E2E8F0] rounded-lg p-3.5">
+<div class="flex items-start justify-between border-b border-[#E2E8F0] pb-3 mb-3">
+<div class="space-y-0.5">
+<span class="font-label-mono-sm text-label-mono-sm text-secondary tracking-wider block">IDENTIFICADOR DE BOLSA</span>
+<h1 class="font-label-mono-lg text-label-mono-lg font-bold text-on-surface flex items-center gap-1.5">
+<span class="material-symbols-outlined text-primary text-[18px]">bloodtype</span>
+              Unidad #GRE-9041
+            </h1>
+<p class="font-body-sm text-body-sm text-secondary font-medium">Glóbulos Rojos Sedimentados</p>
+</div>
+<!-- Blood Group Plate: Universal O- Crimson Plate -->
+<div class="w-12 h-12 rounded bg-primary-container flex flex-col items-center justify-center text-on-primary shadow-sm ring-1 ring-primary/20 shrink-0">
+<span class="font-label-blood-group text-label-blood-group font-extrabold tracking-tight leading-none">O-</span>
+<span class="font-label-badge text-[9px] uppercase tracking-widest text-on-primary-container leading-none mt-0.5">Rh(-)</span>
+</div>
+</div>
+<!-- 4-Column Clinical Attribute Matrix -->
+<div class="grid grid-cols-3 gap-2 pt-0.5">
+<div class="space-y-0.5">
+<span class="font-label-badge text-label-badge text-secondary block">DONANTE</span>
+<span class="font-label-mono-sm text-label-mono-sm font-semibold text-on-surface">D-882 (Anón)</span>
+</div>
+<div class="space-y-0.5">
+<span class="font-label-badge text-label-badge text-secondary block">EXTRACCIÓN</span>
+<span class="font-label-mono-sm text-label-mono-sm font-semibold text-on-surface">Hoy, 04:15</span>
+</div>
+<div class="space-y-0.5 text-right">
+<span class="font-label-badge text-label-badge text-secondary block">VOLUMEN</span>
+<span class="font-label-mono-sm text-label-mono-sm font-bold text-on-surface">450 mL</span>
+</div>
+</div>
+</section>
+<!-- Cold Chain & Preservation Telemetry Bar -->
+<section class="bg-surface-container-lowest border border-[#E2E8F0] rounded-lg p-3">
+<div class="flex items-center justify-between">
+<div class="flex items-center gap-2.5">
+<div class="w-8 h-8 rounded bg-[#ECFDF5] flex items-center justify-center text-[#059669]">
+<span class="material-symbols-outlined text-[18px]">device_thermostat</span>
+</div>
+<div>
+<div class="flex items-center gap-1.5">
+<span class="font-body-md text-body-md font-semibold text-on-surface">Cámara Fría #02</span>
+<span class="font-label-mono-sm text-label-mono-sm font-bold text-[#059669]">3.8 °C</span>
+</div>
+<span class="font-body-sm text-body-sm text-secondary">Sensor continuo IoT: Rango estricto 2°C - 6°C</span>
+</div>
+</div>
+<div class="flex items-center gap-1 px-2 py-0.5 bg-[#ECFDF5] rounded-full border border-[#A7F3D0]">
+<span class="w-1.5 h-1.5 rounded-full bg-[#059669]"></span>
+<span class="font-label-badge text-[10px] font-bold text-[#059669] tracking-wider">OK VERDE</span>
+</div>
+</div>
+</section>
+<!-- Sequential Clinical Process Verification Checklist -->
+<section class="bg-surface-container-lowest border border-[#E2E8F0] rounded-lg overflow-hidden">
+<div class="px-3.5 py-2.5 bg-surface-container-low border-b border-[#E2E8F0] flex items-center justify-between">
+<span class="font-label-badge text-label-badge tracking-wider text-secondary uppercase font-bold">PROTOCOLO DE LIBERACIÓN CLÍNICA</span>
+<span class="font-label-mono-sm text-label-mono-sm text-secondary">3 de 5 Completados</span>
+</div>
+<!-- Sequential Timeline Rows -->
+<div class="divide-y divide-[#E2E8F0]">
+<!-- Phase 1: Tipificación y Fenotipaje (Completed) -->
+<div class="p-3.5 flex items-start gap-3">
+<div class="mt-0.5 flex flex-col items-center">
+<div class="w-6 h-6 rounded-full bg-[#ECFDF5] text-[#059669] flex items-center justify-center border border-[#A7F3D0]">
+<span class="material-symbols-outlined text-[16px] material-symbols-fill" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="w-0.5 h-6 bg-[#A7F3D0] mt-1 -mb-1"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h2 class="font-body-md text-body-md font-semibold text-on-surface">1. Tipificación y Fenotipaje</h2>
+<span class="font-label-badge text-[10px] text-[#059669] bg-[#ECFDF5] px-1.5 py-0.5 rounded font-bold">CONFIRMADO</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">Grupo O Rh(-) D negativo verificado por doble operador.</p>
+<div class="mt-1 flex items-center gap-1.5 text-secondary font-label-mono-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px]">verified_user</span>
+<span>Bioquímico: Dra. M. Vargas • 04:30 AM</span>
+</div>
+</div>
+</div>
+<!-- Phase 2: Tamizaje Serológico e Infeccioso (Completed) -->
+<div class="p-3.5 flex items-start gap-3">
+<div class="mt-0.5 flex flex-col items-center">
+<div class="w-6 h-6 rounded-full bg-[#ECFDF5] text-[#059669] flex items-center justify-center border border-[#A7F3D0]">
+<span class="material-symbols-outlined text-[16px] material-symbols-fill" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="w-0.5 h-6 bg-[#FDE68A] mt-1 -mb-1"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h2 class="font-body-md text-body-md font-semibold text-on-surface">2. Tamizaje Serológico e Infeccioso</h2>
+<span class="font-label-badge text-[10px] text-[#059669] bg-[#ECFDF5] px-1.5 py-0.5 rounded font-bold">NO REACTIVO</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">Panel CLIA: VIH 1/2, VHB (HBsAg), VHC, Chagas y Sífilis negativos.</p>
+<div class="mt-1 flex items-center gap-1.5 text-secondary font-label-mono-sm text-[11px]">
+<span class="material-symbols-outlined text-[13px]">biotech</span>
+<span>Analizador Cobas e601 • Lote #419-B</span>
+</div>
+</div>
+</div>
+<!-- Phase 3: Pruebas Cruzadas de Compatibilidad (In Progress - Active Amber Row) -->
+<div class="p-3.5 flex items-start gap-3 bg-[#FFFDF5] border-l-4 border-l-[#D97706]">
+<div class="mt-0.5 flex flex-col items-center">
+<div class="w-6 h-6 rounded-full bg-[#FFFBEB] text-[#D97706] flex items-center justify-center border border-[#FDE68A]">
+<span class="material-symbols-outlined text-[15px] pulse-amber">sync</span>
+</div>
+<div class="w-0.5 h-6 bg-[#E2E8F0] mt-1 -mb-1"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h2 class="font-body-md text-body-md font-bold text-on-surface">3. Pruebas Cruzadas (Mayor y Menor)</h2>
+<span class="font-label-badge text-[10px] text-[#D97706] bg-[#FEF3C7] px-1.5 py-0.5 rounded font-bold flex items-center gap-1">
+<span class="w-1.5 h-1.5 rounded-full bg-[#D97706] pulse-amber"></span>
+                  EN CURSO
+                </span>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface mt-0.5 font-medium">Requerimiento urgente: Paciente UCI - Cama 4 (Hemoperitoneo)</p>
+<!-- Real-time Progress Countdown Bar -->
+<div class="mt-2 p-2 bg-surface-container-lowest border border-[#FDE68A] rounded">
+<div class="flex justify-between items-center text-xs mb-1">
+<span class="font-label-badge text-secondary uppercase">Incubación en Gel (37°C)</span>
+<span class="font-label-mono-sm text-[#D97706] font-bold">~ 6 min restantes</span>
+</div>
+<div class="w-full h-1.5 bg-[#FEF3C7] rounded-full overflow-hidden">
+<div class="h-full bg-[#D97706] rounded-full" style="width: 72%;"></div>
+</div>
+</div>
+</div>
+</div>
+<!-- Phase 4: Inspección Visual de Calidad (Completed) -->
+<div class="p-3.5 flex items-start gap-3">
+<div class="mt-0.5 flex flex-col items-center">
+<div class="w-6 h-6 rounded-full bg-[#ECFDF5] text-[#059669] flex items-center justify-center border border-[#A7F3D0]">
+<span class="material-symbols-outlined text-[16px] material-symbols-fill" style="font-variation-settings: 'FILL' 1;">check</span>
+</div>
+<div class="w-0.5 h-6 bg-[#E2E8F0] mt-1 -mb-1"></div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h2 class="font-body-md text-body-md font-semibold text-on-surface">4. Inspección Visual de Calidad</h2>
+<span class="font-label-badge text-[10px] text-[#059669] bg-[#ECFDF5] px-1.5 py-0.5 rounded font-bold">CONFORME</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">Sin hemólisis visible, integridad de sellos y libre de agregados o coágulos.</p>
+</div>
+</div>
+<!-- Phase 5: Firma de Liberación Médica (Pending / Blocked) -->
+<div class="p-3.5 flex items-start gap-3 opacity-80">
+<div class="mt-0.5">
+<div class="w-6 h-6 rounded-full bg-surface-container text-secondary flex items-center justify-center border border-[#CBD5E1]">
+<span class="material-symbols-outlined text-[15px]">lock</span>
+</div>
+</div>
+<div class="flex-1 min-w-0">
+<div class="flex items-center justify-between">
+<h2 class="font-body-md text-body-md font-medium text-secondary">5. Firma y Liberación Médica</h2>
+<span class="font-label-badge text-[10px] text-secondary bg-surface-container px-1.5 py-0.5 rounded font-bold">BLOQUEADO</span>
+</div>
+<p class="font-body-sm text-body-sm text-secondary mt-0.5">Requiere finalización de Fase 3 para validación criptográfica ISBT 128.</p>
+</div>
+</div>
+</div>
+</section>
+<!-- Warning Callout Note -->
+<div class="p-3 bg-[#FEF2F2] border-l-4 border-l-[#DC2626] rounded-r text-[#991B1B] text-body-sm flex items-start gap-2">
+<span class="material-symbols-outlined text-[#DC2626] text-[18px] shrink-0 mt-0.5">notification_important</span>
+<span class="leading-snug">
+<strong>Protocolo de Emergencia Vital:</strong> La liberación anticipada exige confirmación de compatibilidad o exención expresa firmada por el Jefe de Guardia.
+        </span>
+</div>
+<!-- Action Panel -->
+<section class="pt-1 pb-2 space-y-2">
+<!-- Primary Action Button (Emergency Dispatch) -->
+<button class="w-full h-12 bg-primary-container hover:bg-[#7F1D1D] active:opacity-90 text-on-primary font-headline-sm text-headline-sm rounded flex items-center justify-center gap-2 transition-colors" type="button">
+<span class="material-symbols-outlined text-[20px]">bolt</span>
+<span>Liberar Unidad con Protocolo de Urgencia</span>
+</button>
+<!-- Secondary Destructive Action (Quarantine / Hold) -->
+<button class="w-full h-11 bg-surface-container-lowest border border-[#CBD5E1] text-[#0F172A] hover:bg-surface-container active:bg-surface-dim font-body-md text-body-md font-semibold rounded flex items-center justify-center gap-1.5 transition-colors" type="button">
+<span class="material-symbols-outlined text-secondary text-[18px]">back_hand</span>
+<span>Rechazar / Retener en Cuarentena</span>
+</button>
+</section>
+</main>
+<!-- BottomNavBar (Strict Shared Component Implementation) -->
+<!-- Destination count: 3 | Active tab: 'Procesos' -->
+<nav class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-2 bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant dark:border-outline max-w-md mx-auto">
+<!-- Tab 1: Reservas (Inactive) -->
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim py-1 px-3 hover:bg-surface-container-low dark:hover:bg-surface-dim transition-colors active:scale-95 duration-100" type="button">
+<span class="material-symbols-outlined text-[22px]">inventory_2</span>
+<span class="font-label-badge text-label-badge uppercase tracking-wider mt-0.5">Reservas</span>
+</button>
+<!-- Tab 2: Procesos (Active State via style_active_navigation) -->
+<button class="flex flex-col items-center justify-center text-primary dark:text-inverse-primary font-bold py-1 px-3 border-t-2 border-primary dark:border-inverse-primary hover:bg-surface-container-low dark:hover:bg-surface-dim transition-colors active:scale-95 duration-100" type="button">
+<span class="material-symbols-outlined text-[22px] material-symbols-fill" style="font-variation-settings: 'FILL' 1;">fact_check</span>
+<span class="font-label-badge text-label-badge uppercase tracking-wider mt-0.5">Procesos</span>
+</button>
+<!-- Tab 3: Bitácora (Inactive) -->
+<button class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim py-1 px-3 hover:bg-surface-container-low dark:hover:bg-surface-dim transition-colors active:scale-95 duration-100" type="button">
+<span class="material-symbols-outlined text-[22px]">history_edu</span>
+<span class="font-label-badge text-label-badge uppercase tracking-wider mt-0.5">Bitácora</span>
+</button>
+</nav>
+</div>
+</body></html>
