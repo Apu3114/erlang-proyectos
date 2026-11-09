@@ -3,8 +3,27 @@
 
 -export([start/2, stop/1]).
 
+-define(LISTENER, p44_http_listener).
+
 start(_StartType, _StartArgs) ->
+  ok = iniciar_http(),
   p44_banco_de_sangre_sup:start_link().
 
 stop(_State) ->
+  _ = cowboy:stop_listener(?LISTENER),
   ok.
+
+iniciar_http() ->
+  Dispatch = cowboy_router:compile([
+    {'_', [
+      {"/api/inventario", p44_http_inventario_handler, []},
+      {"/api/solicitudes", p44_http_solicitudes_handler, []},
+      {"/api/alertas", p44_http_alertas_handler, []},
+      {"/metrics", p44_http_metricas_handler, []}
+    ]}
+  ]),
+  Puerto = application:get_env(p44_banco_de_sangre, http_port, 8080),
+  case cowboy:start_clear(?LISTENER, [{port, Puerto}], #{env => #{dispatch => Dispatch}}) of
+    {ok, _Pid} -> ok;
+    {error, {already_started, _Pid}} -> ok
+  end.
