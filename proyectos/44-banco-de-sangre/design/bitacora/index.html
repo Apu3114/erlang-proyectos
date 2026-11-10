@@ -1,0 +1,426 @@
+<!DOCTYPE html>
+
+<html class="h-full bg-background text-on-background" lang="es"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Bitácora de Eventos - Banco de Sangre</title>
+<!-- Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,600&amp;family=JetBrains+Mono:wght@400;500;600&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS CDN -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Tailwind Configuration Script -->
+<script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          "colors": {
+            "on-secondary-fixed-variant": "#3f465c",
+            "secondary": "#565e74",
+            "secondary-container": "#dae2fd",
+            "surface-container-highest": "#d3e4fe",
+            "on-primary-container": "#ffaaa1",
+            "primary-fixed-dim": "#ffb4ac",
+            "on-error-container": "#93000a",
+            "on-primary": "#ffffff",
+            "inverse-surface": "#213145",
+            "tertiary-fixed-dim": "#93ccff",
+            "surface-container": "#e5eeff",
+            "on-primary-fixed-variant": "#8e1214",
+            "on-secondary": "#ffffff",
+            "inverse-primary": "#ffb4ac",
+            "surface-container-lowest": "#ffffff",
+            "on-tertiary-fixed-variant": "#004b73",
+            "tertiary-fixed": "#cce5ff",
+            "on-tertiary": "#ffffff",
+            "surface-dim": "#cbdbf5",
+            "on-background": "#0b1c30",
+            "outline": "#8d706d",
+            "surface-container-low": "#eff4ff",
+            "outline-variant": "#e1bfbb",
+            "error-container": "#ffdad6",
+            "inverse-on-surface": "#eaf1ff",
+            "on-secondary-fixed": "#131b2e",
+            "on-error": "#ffffff",
+            "primary-fixed": "#ffdad6",
+            "error": "#ba1a1a",
+            "surface-tint": "#b02d29",
+            "surface-container-high": "#dce9ff",
+            "tertiary": "#003a5b",
+            "tertiary-container": "#00527e",
+            "on-tertiary-fixed": "#001d31",
+            "surface-variant": "#d3e4fe",
+            "on-surface-variant": "#59413e",
+            "primary-container": "#991b1b",
+            "background": "#f8f9ff",
+            "secondary-fixed": "#dae2fd",
+            "secondary-fixed-dim": "#bec6e0",
+            "on-secondary-container": "#5c647a",
+            "on-tertiary-container": "#82c6ff",
+            "primary": "#760009",
+            "surface-bright": "#f8f9ff",
+            "on-primary-fixed": "#410002",
+            "on-surface": "#0b1c30",
+            "surface": "#f8f9ff"
+          },
+          "borderRadius": {
+            "DEFAULT": "0.125rem",
+            "lg": "0.25rem",
+            "xl": "0.5rem",
+            "full": "0.75rem"
+          },
+          "spacing": {
+            "space-lg": "1rem",
+            "space-md": "0.75rem",
+            "space-xs": "0.25rem",
+            "margin": "1rem",
+            "space-sm": "0.5rem",
+            "margin-mobile": "1rem",
+            "gutter": "1rem",
+            "space-xl": "1.5rem",
+            "gutter-sm": "0.75rem"
+          },
+          "fontFamily": {
+            "body-sm": ["Hanken Grotesk"],
+            "headline-md": ["Hanken Grotesk"],
+            "label-badge": ["Hanken Grotesk"],
+            "headline-lg-mobile": ["Hanken Grotesk"],
+            "headline-sm": ["Hanken Grotesk"],
+            "body-lg": ["Hanken Grotesk"],
+            "headline-lg": ["Hanken Grotesk"],
+            "body-md": ["Hanken Grotesk"],
+            "label-mono-lg": ["JetBrains Mono"],
+            "label-blood-group": ["Hanken Grotesk"],
+            "label-mono-sm": ["JetBrains Mono"]
+          },
+          "fontSize": {
+            "body-sm": ["13px", {"lineHeight": "18px", "fontWeight": "400"}],
+            "headline-md": ["20px", {"lineHeight": "26px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "label-badge": ["11px", {"lineHeight": "14px", "letterSpacing": "0.04em", "fontWeight": "700"}],
+            "headline-lg-mobile": ["24px", {"lineHeight": "30px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "headline-sm": ["17px", {"lineHeight": "22px", "letterSpacing": "0em", "fontWeight": "600"}],
+            "body-lg": ["16px", {"lineHeight": "24px", "fontWeight": "400"}],
+            "headline-lg": ["28px", {"lineHeight": "34px", "letterSpacing": "-0.02em", "fontWeight": "700"}],
+            "body-md": ["14px", {"lineHeight": "20px", "fontWeight": "400"}],
+            "label-mono-lg": ["15px", {"lineHeight": "20px", "letterSpacing": "-0.01em", "fontWeight": "600"}],
+            "label-blood-group": ["22px", {"lineHeight": "24px", "letterSpacing": "-0.01em", "fontWeight": "800"}],
+            "label-mono-sm": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}]
+          }
+        }
+      }
+    }
+  </script>
+<style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+      display: inline-block;
+      vertical-align: middle;
+      line-height: 1;
+    }
+    /* Hide scrollbar for clean horizontal filter scroll */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+  </head>
+<body class="min-h-full bg-slate-100 flex justify-center selection:bg-error-container selection:text-on-error-container antialiased">
+<!-- Mobile Viewport Shell (390px base width, expanding to handheld terminal max-w-md) -->
+<div class="w-full max-w-md bg-surface-container-lowest min-h-screen flex flex-col relative pb-20 shadow-sm border-x border-slate-200">
+<!-- Top Bar Component -->
+<header class="bg-surface-container-lowest dark:bg-inverse-surface text-primary dark:text-inverse-primary border-b border-outline-variant dark:border-outline sticky top-0 z-40">
+<div class="flex justify-between items-center w-full px-4 h-14 max-w-md mx-auto">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-primary dark:text-inverse-primary text-xl" data-icon="local_hospital">local_hospital</span>
+<h1 class="text-headline-sm font-headline-sm font-bold text-primary dark:text-inverse-primary tracking-tight">
+            Bitácora de Eventos
+          </h1>
+</div>
+<div class="flex items-center space-x-1">
+<button aria-label="Exportar informe o filtrar" class="w-9 h-9 flex items-center justify-center text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container dark:hover:bg-surface-dim hover:text-on-surface transition-colors active:opacity-80 rounded" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="file_download">file_download</span>
+</button>
+<button aria-label="Emergencia hospitalaria" class="w-9 h-9 flex items-center justify-center text-primary-container hover:bg-error-container/40 transition-colors active:opacity-80 rounded" type="button">
+<span class="material-symbols-outlined text-xl" data-icon="emergency" data-weight="fill" style="font-variation-settings: 'FILL' 1;">emergency</span>
+</button>
+</div>
+</div>
+</header>
+<!-- Sub-header Clinical Context Strip -->
+<div class="bg-surface-container-low px-4 py-2 border-b border-slate-200 flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="w-2 h-2 rounded-full bg-emerald-600 animate-pulse"></span>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary uppercase tracking-wider">REGISTRO FORENSE EN LÍNEA</span>
+</div>
+<div class="text-label-mono-sm font-label-mono-sm text-secondary">
+        ISBT 128 / LAB-09
+      </div>
+</div>
+<!-- Quick Event Filter Bar with Counts -->
+<section class="bg-surface-container-lowest border-b border-slate-200 px-4 py-3 sticky top-14 z-30">
+<div class="flex items-center space-x-2 overflow-x-auto no-scrollbar py-0.5">
+<!-- Filter 1: Todos (Active) -->
+<button class="flex-shrink-0 inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-sm bg-on-background text-on-primary text-label-badge font-label-badge transition-colors" type="button">
+<span>Todos</span>
+<span class="bg-slate-700 text-on-primary px-1.5 py-0.2 rounded text-[10px] font-label-mono-sm">48</span>
+</button>
+<!-- Filter 2: Alertas / Caducidad -->
+<button class="flex-shrink-0 inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-sm bg-amber-50 text-amber-900 border border-amber-300 text-label-badge font-label-badge hover:bg-amber-100 transition-colors" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-600"></span>
+<span>Alertas / Caducidad</span>
+<span class="bg-amber-200/80 text-amber-900 px-1 py-0.2 rounded text-[10px] font-label-mono-sm font-bold">12</span>
+</button>
+<!-- Filter 3: Fallas / Crítico -->
+<button class="flex-shrink-0 inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-sm bg-red-50 text-red-900 border border-red-300 text-label-badge font-label-badge hover:bg-red-100 transition-colors" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-red-600"></span>
+<span>Fallas / Crítico</span>
+<span class="bg-red-200/80 text-red-900 px-1 py-0.2 rounded text-[10px] font-label-mono-sm font-bold">3</span>
+</button>
+<!-- Filter 4: Operaciones OK -->
+<button class="flex-shrink-0 inline-flex items-center space-x-1.5 px-3 py-1.5 rounded-sm bg-emerald-50 text-emerald-900 border border-emerald-300 text-label-badge font-label-badge hover:bg-emerald-100 transition-colors" type="button">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+<span>Operaciones OK</span>
+<span class="bg-emerald-200/80 text-emerald-900 px-1 py-0.2 rounded text-[10px] font-label-mono-sm font-bold">33</span>
+</button>
+</div>
+</section>
+<!-- Main Chronological Timeline Stream -->
+<main class="flex-1 bg-surface-container-lowest">
+<!-- DATE GROUP: HOY - 24 OCTUBRE -->
+<section>
+<!-- Sticky Section Header -->
+<div class="sticky top-[109px] z-20 bg-slate-50 border-y border-slate-200 px-4 py-2 flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="calendar_today">calendar_today</span>
+<span class="text-label-badge font-label-badge text-on-surface uppercase tracking-wider">Hoy — 24 de Octubre, 2024</span>
+</div>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary">5 eventos</span>
+</div>
+<!-- Timeline Entries (Continuous forensic row architecture with hairline dividers) -->
+<div class="divide-y divide-slate-200">
+<!-- Event 1: Falla / Crítico (Rojo) -->
+<article class="p-4 bg-red-50/40 border-l-[3px] border-l-red-600 transition-colors hover:bg-red-50/70">
+<div class="flex items-start justify-between mb-1.5">
+<div class="flex items-center space-x-2">
+<span class="text-label-mono-sm font-label-mono-sm font-bold text-red-700 bg-red-100 px-1.5 py-0.5 rounded">14:28</span>
+<span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-red-100 text-red-800 text-[10px] font-label-badge uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>
+<span>Falla Crítica</span>
+</span>
+</div>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary">ID #EV-8840</span>
+</div>
+<h2 class="text-body-md font-body-md font-bold text-red-950 mb-1 leading-snug">
+              Alarma de Temperatura en Cámara Fría #04
+            </h2>
+<p class="text-body-sm font-body-sm text-slate-700 mb-2.5">
+              Oscilación anómala a <span class="font-label-mono-sm font-bold text-red-700">7.2°C</span> (Límite operacional máx: <span class="font-label-mono-sm">6.0°C</span>). Sensor <span class="font-label-mono-sm font-bold text-slate-900">TC-04</span>. Notificación prioritaria enviada a guardia técnica.
+            </p>
+<div class="flex items-center justify-between pt-1 border-t border-red-200/60 text-label-mono-sm font-label-mono-sm text-slate-600">
+<span class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-sm text-red-600" data-icon="engineering">engineering</span>
+<span>Técnico: Notificado (En ruta)</span>
+</span>
+<span class="font-semibold text-red-700 underline underline-offset-2 cursor-pointer">Protocolo Frío →</span>
+</div>
+</article>
+<!-- Event 2: Alerta Stock Crítico (Ámbar) -->
+<article class="p-4 border-l-[3px] border-l-amber-500 bg-amber-50/20 hover:bg-amber-50/50 transition-colors">
+<div class="flex items-start justify-between mb-1.5">
+<div class="flex items-center space-x-2">
+<span class="text-label-mono-sm font-label-mono-sm font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded">13:50</span>
+<span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-label-badge uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+<span>Stock Crítico</span>
+</span>
+</div>
+<!-- Blood Badge O- Universal Donor -->
+<span class="inline-flex items-center justify-center w-7 h-7 bg-primary-container text-on-primary rounded text-label-blood-group font-label-blood-group text-sm font-bold shadow-xs">
+                O-
+              </span>
+</div>
+<h2 class="text-body-md font-body-md font-bold text-slate-900 mb-1 leading-snug">
+              Alerta de Reserva: O- Negativo bajo umbral mínimo
+            </h2>
+<p class="text-body-sm font-body-sm text-slate-700 mb-2.5">
+              Volumen actual registrado en <span class="font-label-mono-sm font-bold text-amber-900">8 unidades</span> restantes (mínimo de seguridad estipulado: <span class="font-label-mono-sm font-bold text-slate-900">25 unidades</span>). Riesgo en transfusiones de choque.
+            </p>
+<div class="flex items-center justify-between pt-1 border-t border-slate-200 text-label-mono-sm font-label-mono-sm text-secondary">
+<span class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-sm text-amber-600" data-icon="inventory_2">inventory_2</span>
+<span>Déficit: -17 unidades</span>
+</span>
+<span class="text-slate-800 font-semibold cursor-pointer">Solicitar canje</span>
+</div>
+</article>
+<!-- Event 3: Operación OK (Verde) -->
+<article class="p-4 border-l-[3px] border-l-emerald-600 hover:bg-slate-50 transition-colors">
+<div class="flex items-start justify-between mb-1.5">
+<div class="flex items-center space-x-2">
+<span class="text-label-mono-sm font-label-mono-sm font-semibold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">12:15</span>
+<span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-label-badge uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+<span>Operación OK</span>
+</span>
+</div>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary">LOTE #REC-4109</span>
+</div>
+<h2 class="text-body-md font-body-md font-bold text-slate-900 mb-1 leading-snug">
+              Ingreso de Colecta Externa Exitosa
+            </h2>
+<p class="text-body-sm font-body-sm text-slate-700 mb-2">
+<span class="font-label-mono-sm font-bold text-slate-900">34 unidades</span> recepcionadas desde Hospital Clínico Norte y almacenadas en cuarentena para análisis inmunohematológico reglamentario.
+            </p>
+<div class="flex items-center space-x-4 pt-1 text-label-mono-sm font-label-mono-sm text-secondary">
+<span class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-sm text-emerald-700" data-icon="check_circle">check_circle</span>
+<span>Cadena de frío: Conforme (3.8°C)</span>
+</span>
+</div>
+</article>
+<!-- Event 4: Alerta Caducidad (Ámbar) -->
+<article class="p-4 border-l-[3px] border-l-amber-500 bg-amber-50/20 hover:bg-amber-50/50 transition-colors">
+<div class="flex items-start justify-between mb-1.5">
+<div class="flex items-center space-x-2">
+<span class="text-label-mono-sm font-label-mono-sm font-bold text-amber-800 bg-amber-100 px-1.5 py-0.5 rounded">11:05</span>
+<span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-amber-100 text-amber-900 text-[10px] font-label-badge uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-amber-500"></span>
+<span>Caducidad Próxima</span>
+</span>
+</div>
+<span class="text-label-mono-sm font-label-mono-sm text-amber-900 font-semibold bg-amber-100/80 px-1.5 py-0.5 rounded">Expira en 14h</span>
+</div>
+<h2 class="text-body-md font-body-md font-bold text-slate-900 mb-1 leading-snug">
+              Aviso de Caducidad: Concentrado de Plaquetas
+            </h2>
+<p class="text-body-sm font-body-sm text-slate-700 mb-2.5">
+              Lote <span class="font-label-mono-sm font-bold text-slate-900">#PLQ-8921</span> a 14 horas de su ventana límite de viabilidad. Priorizado para uso inmediato o derivación a Unidad Oncohematológica.
+            </p>
+<div class="flex items-center justify-between pt-1 border-t border-slate-200 text-label-mono-sm font-label-mono-sm text-secondary">
+<span class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-sm text-slate-600" data-icon="timer">timer</span>
+<span>Ventana: 25/10 01:05 AM</span>
+</span>
+<span class="text-slate-800 font-semibold cursor-pointer">Despachar →</span>
+</div>
+</article>
+<!-- Event 5: Operación OK (Verde) -->
+<article class="p-4 border-l-[3px] border-l-emerald-600 hover:bg-slate-50 transition-colors">
+<div class="flex items-start justify-between mb-1.5">
+<div class="flex items-center space-x-2">
+<span class="text-label-mono-sm font-label-mono-sm font-semibold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">09:30</span>
+<span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-label-badge uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+<span>Calibración OK</span>
+</span>
+</div>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary">QC-DIARIO</span>
+</div>
+<h2 class="text-body-md font-body-md font-bold text-slate-900 mb-1 leading-snug">
+              Calibración de Centrífuga y Agitador de Plaquetas
+            </h2>
+<p class="text-body-sm font-body-sm text-slate-700">
+              Control rutinario de RPM, oscilación y balance térmico aprobado con éxito según protocolo estándar ISO 15189. Equipos autorizados para turno operativo.
+            </p>
+</article>
+</div>
+</section>
+<!-- DATE GROUP: AYER - 23 OCTUBRE -->
+<section class="mt-2">
+<!-- Sticky Section Header -->
+<div class="sticky top-[109px] z-20 bg-slate-50 border-y border-slate-200 px-4 py-2 flex items-center justify-between">
+<div class="flex items-center space-x-2">
+<span class="material-symbols-outlined text-secondary text-sm" data-icon="history">history</span>
+<span class="text-label-badge font-label-badge text-on-surface uppercase tracking-wider">Ayer — 23 de Octubre, 2024</span>
+</div>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary">2 eventos</span>
+</div>
+<div class="divide-y divide-slate-200">
+<!-- Event 6: Falla/Urgencia (Rojo) -->
+<article class="p-4 bg-red-50/30 border-l-[3px] border-l-red-600 transition-colors hover:bg-red-50/60">
+<div class="flex items-start justify-between mb-1.5">
+<div class="flex items-center space-x-2">
+<span class="text-label-mono-sm font-label-mono-sm font-bold text-red-700 bg-red-100 px-1.5 py-0.5 rounded">22:45</span>
+<span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-red-100 text-red-800 text-[10px] font-label-badge uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-red-600 animate-pulse"></span>
+<span>Código Rojo</span>
+</span>
+</div>
+<span class="inline-flex items-center justify-center w-7 h-7 bg-primary-container text-on-primary rounded text-label-blood-group font-label-blood-group text-sm font-bold">
+                O-
+              </span>
+</div>
+<h2 class="text-body-md font-body-md font-bold text-red-950 mb-1 leading-snug">
+              Activación de Código Rojo por Traumatología
+            </h2>
+<p class="text-body-sm font-body-sm text-slate-700 mb-2.5">
+              Despacho de ultra-urgencia de <span class="font-label-mono-sm font-bold text-red-700">4 unidades O- Negativo</span> para quirófano central (Paciente POLITRAUMA-991). Procedimiento de trazabilidad rápida concluido.
+            </p>
+<div class="flex items-center justify-between pt-1 border-t border-red-200/50 text-label-mono-sm font-label-mono-sm text-slate-600">
+<span class="flex items-center space-x-1">
+<span class="material-symbols-outlined text-sm text-slate-700" data-icon="verified_user">verified_user</span>
+<span>Validado por: Dra. M. Valenzuela</span>
+</span>
+<span class="text-secondary">Acta #741</span>
+</div>
+</article>
+<!-- Event 7: Operación OK (Verde) -->
+<article class="p-4 border-l-[3px] border-l-emerald-600 hover:bg-slate-50 transition-colors">
+<div class="flex items-start justify-between mb-1.5">
+<div class="flex items-center space-x-2">
+<span class="text-label-mono-sm font-label-mono-sm font-semibold text-emerald-800 bg-emerald-50 px-1.5 py-0.5 rounded border border-emerald-200">18:10</span>
+<span class="inline-flex items-center space-x-1 px-2 py-0.5 rounded-full bg-emerald-50 text-emerald-800 text-[10px] font-label-badge uppercase tracking-wider">
+<span class="w-1.5 h-1.5 rounded-full bg-emerald-600"></span>
+<span>Serología OK</span>
+</span>
+</div>
+<span class="text-label-mono-sm font-label-mono-sm text-secondary">LOTE #B-202</span>
+</div>
+<h2 class="text-body-md font-body-md font-bold text-slate-900 mb-1 leading-snug">
+              Control Serológico Completado sin Incidencias
+            </h2>
+<p class="text-body-sm font-body-sm text-slate-700">
+              Tamizaje de VIH, Hepatitis B/C, Chagas y Sífilis para el lote de 20 bolsas procesado en su totalidad con resultados no reactivos. Unidades liberadas a stock activo.
+            </p>
+</article>
+</div>
+</section>
+<!-- End of Stream Indicator -->
+<div class="p-6 text-center text-secondary">
+<span class="material-symbols-outlined text-2xl text-slate-400 mb-1" data-icon="inventory">inventory</span>
+<p class="text-label-mono-sm font-label-mono-sm">Fin de registros para el período seleccionado</p>
+</div>
+</main>
+<!-- BottomNavBar Component (JSON Anchor Execution) -->
+<!-- Active tab autonomously determined: 'Bitácora' is the exact match for this historical logs screen -->
+<nav aria-label="Navegación principal" class="fixed bottom-0 left-0 w-full z-50 flex justify-around items-center h-16 px-2 bg-surface-container-lowest dark:bg-inverse-surface border-t border-outline-variant dark:border-outline max-w-md mx-auto">
+<!-- Tab 1: Reservas (Inactive) -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim py-1 px-3 hover:bg-surface-container-low dark:hover:bg-surface-dim transition-colors active:scale-95 transition-transform duration-100 flex-1" href="#reservas">
+<span class="material-symbols-outlined text-xl" data-icon="inventory_2">inventory_2</span>
+<span class="text-label-badge font-label-badge uppercase mt-1">Reservas</span>
+</a>
+<!-- Tab 2: Procesos (Inactive) -->
+<a class="flex flex-col items-center justify-center text-secondary dark:text-secondary-fixed-dim py-1 px-3 hover:bg-surface-container-low dark:hover:bg-surface-dim transition-colors active:scale-95 transition-transform duration-100 flex-1" href="#procesos">
+<span class="material-symbols-outlined text-xl" data-icon="fact_check">fact_check</span>
+<span class="text-label-badge font-label-badge uppercase mt-1">Procesos</span>
+</a>
+<!-- Tab 3: Bitácora (ACTIVE) -->
+<a aria-current="page" class="flex flex-col items-center justify-center text-primary dark:text-inverse-primary font-bold py-1 px-3 border-t-2 border-primary dark:border-inverse-primary hover:bg-surface-container-low dark:hover:bg-surface-dim transition-colors active:scale-95 transition-transform duration-100 flex-1" href="#bitacora">
+<span class="material-symbols-outlined text-xl" data-icon="history_edu" data-weight="fill" style="font-variation-settings: 'FILL' 1;">history_edu</span>
+<span class="text-label-badge font-label-badge uppercase mt-1">Bitácora</span>
+</a>
+</nav>
+</div>
+</body></html>

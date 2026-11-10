@@ -227,12 +227,12 @@ natural de `p44_donantes`.
 - [x] Simulador del escenario y prueba de caos (6 experimentos).
 - [x] Bitácora persistente en DETS: sobrevive a reinicio del nodo y al `kill` del proceso.
 - [x] API HTTP con cowboy: inventario, solicitudes, alertas SSE y `/metrics`.
-- [x] Pantallas de Stitch en `design/` y `design/DESIGN.md` (dashboard y detalle de unidad; falta el export de bitácora).
+- [x] Pantallas de Stitch en `design/` y `design/DESIGN.md` (dashboard, detalle de unidad y bitácora; las tres exportadas de Stitch).
 - [x] Release relx (`rebar3 as prod release`) y servicio systemd en `deploy/`.
 - [x] **71 pruebas** con `rebar3 eunit` en verde.
 
 **Pendiente / extensiones naturales:**
-- [ ] Exportar de Stitch la pantalla de bitácora (`design/bitacora/`) o reconstruirla localmente marcándola como tal.
+- [x] Exportar de Stitch la pantalla de bitácora (`design/bitacora/`): export real de Stitch recibido y descomprimido.
 - [ ] Conectar las pantallas estáticas de Stitch a la API real.
 - [ ] Replicar o respaldar el archivo DETS (el disco sigue siendo el punto único de falla).
 - [ ] Reglas de compatibilidad propias para plaquetas (hoy comparten la simplificación del plasma).
