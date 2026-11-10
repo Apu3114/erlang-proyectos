@@ -24,6 +24,7 @@ init([]) ->
     supervisor(p44_refrigeradores_sup),
     worker(p44_repoblador, {p44_repoblador, start_link, []}),
     worker(p44_inventario, {p44_inventario, start_link, []}),
+    worker(p44_catalogo, {p44_catalogo, start_link, []}),
     worker(p44_alertas, {p44_alertas, start_link, []}),
     worker(p44_banco_de_sangre_server, {p44_banco_de_sangre_server, start_link, []})
   ],

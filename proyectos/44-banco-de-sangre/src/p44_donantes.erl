@@ -6,6 +6,8 @@
 %% #{retiradas => N, ya_entregadas => [{IdUnidad, Receptor}]}
 %% ya_entregadas: unidades que ya se transfundieron; hay que avisar a esos receptores.
 retirar(Donante, Motivo) ->
+  ok = p44_bitacora:registrar({donante, Donante},
+                              #{evento => bloqueado, motivo => Motivo}),
   Pids = pg:get_members(p44_pg, {donante, Donante}),
   lists:foldl(fun(Pid, Acc) -> retirar_una(Pid, Motivo, Acc) end,
               #{retiradas => 0, ya_entregadas => []}, Pids).

@@ -27,7 +27,10 @@ init({Id, Lote0}) ->
       ok = p44_bitacora:registrar(Clave, #{evento => creada, estado => operando, lote => Lote0}),
       {ok, #{id => Id, lote => Lote0, estado => operando}};
     Historial ->
-      [{_, #{lote := Lote}} | _] = Historial,
+      Lote = case [L || {_, #{evento := creada, lote := L}} <- Historial] of
+        [L | _] -> L;
+        [] -> Lote0
+      end,
       {_, Ultimo} = lists:last(Historial),
       case maps:get(estado, Ultimo) of
         fallado -> {ok, #{id => Id, lote => Lote, estado => fallado}, {continue, reaplicar}};

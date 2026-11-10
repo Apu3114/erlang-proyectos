@@ -14,7 +14,8 @@
 -module(p44_bitacora).
 -behaviour(gen_server).
 
--export([start_link/0, registrar/2, historial/1, unidades/0, refrigeradores/0]).
+-export([start_link/0, registrar/2, registrar_en/3, historial/1, unidades/0, refrigeradores/0,
+         donantes/0, lotes/0]).
 -export([init/1, handle_call/3, handle_cast/2, terminate/2]).
 
 -define(ETS, p44_bitacora).
@@ -27,15 +28,24 @@ start_link() ->
 %% Agrega un evento al historial de la unidad Id. Escribe directo en ETS y en DETS,
 %% sin pasar por el proceso: así nunca es un cuello de botella.
 registrar(Id, Evento) when is_map(Evento) ->
-  Clave = {Id, erlang:unique_integer([monotonic])},
-  Registro = {Clave, erlang:system_time(millisecond), Evento},
+  registrar_en(Id, erlang:system_time(millisecond), Evento).
+
+%% El unique_integer de la VM vuelve a empezar tras un reinicio y sobrescribia
+%% eventos antiguos con la misma clave DETS (incluidas algunas altas). Una marca
+%% de tiempo de nanosegundos y un sufijo aleatorio evitan esa colision.
+registrar_en(Id, FechaMs, Evento) when is_integer(FechaMs), is_map(Evento) ->
+  Clave = {Id, {erlang:system_time(nanosecond), crypto:strong_rand_bytes(8)}},
+  Registro = {Clave, FechaMs, Evento},
   true = ets:insert(?ETS, Registro),
   ok = dets:insert(?DETS, Registro),
   ok.
 
 %% Devuelve [{MarcaDeTiempoMs, Evento}] en orden cronológico.
 historial(Id) ->
-  ets:select(?ETS, [{{{Id, '_'}, '$1', '$2'}, [], [{{'$1', '$2'}}]}]).
+  Registros = ets:select(?ETS, [{{{Id, '$1'}, '$2', '$3'}, [], [{{'$1', '$2', '$3'}}]}]),
+  Ordenados = lists:sort(fun({K1, T1, _}, {K2, T2, _}) -> {T1, K1} =< {T2, K2} end,
+                         Registros),
+  [{Fecha, Evento} || {_, Fecha, Evento} <- Ordenados].
 
 %% Datos de todas las unidades que alguna vez se crearon (para repoblar tras una caída).
 unidades() ->
@@ -45,7 +55,17 @@ unidades() ->
 %% [{IdRefrigerador, Lote}] de todos los refrigeradores creados.
 refrigeradores() ->
   ets:select(?ETS, [{{{{refrigerador, '$1'}, '_'}, '_', #{evento => creada, lote => '$2'}},
-                     [], [{{'$1', '$2'}}]}]).
+                      [], [{{'$1', '$2'}}]}]).
+
+%% Metadatos nuevos. Los donantes/lotes de la simulación original se infieren
+%% desde las unidades y los refrigeradores; no se inventan datos personales.
+donantes() ->
+  ets:select(?ETS, [{{{{donante, '$1'}, '_'}, '_', #{evento => registrado, datos => '$2'}},
+                      [], [{{'$1', '$2'}}]}]).
+
+lotes() ->
+  ets:select(?ETS, [{{{{lote, '$1'}, '_'}, '_', #{evento => registrado, datos => '$2'}},
+                      [], [{{'$1', '$2'}}]}]).
 
 init([]) ->
   %% Sin esto, un apagado normal del supervisor mata el proceso sin pasar por

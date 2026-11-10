@@ -43,7 +43,7 @@ callback_mode() -> handle_event_function.
 
 init(#{id := Id} = Datos0) ->
   {Estado, Datos} =
-    case restaurar(Id) of
+    case restaurar(Id, Datos0) of
       sin_historial ->
         ok = p44_bitacora:registrar(Id, #{evento => creada, estado => disponible, datos => Datos0}),
         {disponible, Datos0};
@@ -59,12 +59,16 @@ init(#{id := Id} = Datos0) ->
 
 %% Reconstruye estado y datos desde la bitácora (primer evento = datos base,
 %% último evento = estado actual y sus extras).
-restaurar(Id) ->
+restaurar(Id, Datos0) ->
   case p44_bitacora:historial(Id) of
     [] ->
       sin_historial;
     Historial ->
-      [{_, #{datos := Base}} | _] = Historial,
+       %% La base no depende del orden en que ETS devolvio los eventos.
+       Base = case [D || {_, #{evento := creada, datos := D}} <- Historial] of
+         [D | _] -> D;
+         [] -> Datos0
+       end,
       {_, Ultimo} = lists:last(Historial),
       Extra = maps:with([solicitante, reserva_hasta, receptor], Ultimo),
       {maps:get(estado, Ultimo), maps:merge(Base, Extra)}

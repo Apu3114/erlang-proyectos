@@ -19,7 +19,8 @@ http_test_() ->
         {"GET /api/alertas transmite un evento por SSE", {timeout, 20, fun alertas_sse/0}},
         {"Listado, despacho, liberacion, retiro y bitacora HTTP", fun flujo_interfaz/0},
         {"Falla de refrigerador HTTP compromete el lote", fun falla_http/0},
-        {"Retiro por donante HTTP afecta a todas sus unidades", fun retiro_donante_http/0}]
+        {"Retiro por donante HTTP afecta a todas sus unidades", fun retiro_donante_http/0},
+        {"Registrar donante, crear lote y cargar unidad desde HTTP", fun altas_http/0}]
     end}}.
 
 arrancar() ->
@@ -43,6 +44,11 @@ arrancar() ->
        {"/api/bitacora", p44_http_bitacora_handler, []},
        {"/api/refrigeradores/:id/falla", p44_http_refrigeradores_handler, []},
        {"/api/donantes/:id/retirar", p44_http_donantes_handler, []},
+       {"/api/donantes", p44_http_catalogo_donantes_handler, []},
+       {"/api/donantes/:id", p44_http_catalogo_donantes_handler, []},
+       {"/api/lotes", p44_http_lotes_handler, []},
+       {"/api/lotes/:id", p44_http_lotes_handler, []},
+       {"/api/lotes/:id/unidades", p44_http_lote_unidades_handler, []},
        {"/metrics", p44_http_metricas_handler, []}
     ]}
   ]),
@@ -212,6 +218,47 @@ retiro_donante_http() ->
   {200, {ok, #{<<"retiradas">> := 1}}} = post("/api/donantes/4444/retirar",
                                               #{motivo => <<"prueba positiva tardia">>}),
   {200, {ok, #{<<"estado">> := <<"retirada">>}}} = http_get("/api/unidades/204").
+
+altas_http() ->
+  {200, {ok, #{<<"donantes">> := Antes}}} = http_get("/api/donantes"),
+  ?assert(lists:any(fun(#{<<"id">> := D}) -> D =:= 1203 end, Antes)),
+  {400, _} = post("/api/donantes", #{alias => <<"Prueba">>, tipo => <<"no_existe">>}),
+  {201, {ok, #{<<"id">> := Donante}}} = post("/api/donantes",
+    #{alias => <<"Donante ficticio">>, tipo => o_neg, edad => 25, peso_kg => 70}),
+  {200, {ok, #{<<"edad">> := 25, <<"total">> := 0}}} =
+    http_get("/api/donantes/" ++ integer_to_list(Donante)),
+  {201, {ok, #{<<"id">> := Lote}}} = post("/api/lotes",
+    #{nombre => <<"Lote nuevo de prueba">>, componente => plasma}),
+  {200, {ok, #{<<"estado">> := <<"operando">>, <<"total">> := 0}}} =
+    http_get("/api/lotes/" ++ integer_to_list(Lote)),
+  Ruta = "/api/lotes/" ++ integer_to_list(Lote) ++ "/unidades",
+  {201, {ok, #{<<"id">> := IdUnidad}}} = post(Ruta, #{donante => Donante}),
+  ?assertMatch({disponible, _}, p44_unidad:estado(IdUnidad)),
+  {409, {ok, #{<<"error">> := <<"donante_ya_en_lote">>}}} =
+    post(Ruta, #{donante => Donante}),
+  {409, {ok, #{<<"error">> := <<"donante_bloqueado">>}}} =
+    post(Ruta, #{donante => 4444}),
+  {200, {ok, #{<<"disponibles">> := 1, <<"total">> := 1}}} =
+    http_get("/api/lotes/" ++ integer_to_list(Lote)),
+  {200, {ok, #{<<"total">> := 1}}} =
+    http_get("/api/donantes/" ++ integer_to_list(Donante)),
+  Viejo = whereis(p44_catalogo),
+  exit(Viejo, kill),
+  esperar_catalogo(Viejo, 40),
+  {200, {ok, #{<<"total">> := 1}}} =
+    http_get("/api/donantes/" ++ integer_to_list(Donante)),
+  {200, {ok, #{<<"total">> := 1}}} =
+    http_get("/api/lotes/" ++ integer_to_list(Lote)),
+  {200, _} = post("/api/refrigeradores/" ++ integer_to_list(Lote) ++ "/falla", #{}),
+  {409, {ok, #{<<"error">> := <<"refrigerador_fallado">>}}} =
+    post(Ruta, #{donante => 1203}).
+
+esperar_catalogo(_, 0) -> error(catalogo_no_reinicio);
+esperar_catalogo(Viejo, N) ->
+  case whereis(p44_catalogo) of
+    Pid when is_pid(Pid), Pid =/= Viejo -> ok;
+    _ -> timer:sleep(50), esperar_catalogo(Viejo, N - 1)
+  end.
 
 esperar_evento_sse(_HandlerPid, 0) -> error(sin_evento_sse);
 esperar_evento_sse(HandlerPid, N) ->

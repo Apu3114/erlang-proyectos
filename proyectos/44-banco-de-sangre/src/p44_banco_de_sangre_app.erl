@@ -25,6 +25,11 @@ iniciar_http() ->
       {"/api/bitacora", p44_http_bitacora_handler, []},
       {"/api/refrigeradores/:id/falla", p44_http_refrigeradores_handler, []},
       {"/api/donantes/:id/retirar", p44_http_donantes_handler, []},
+      {"/api/donantes", p44_http_catalogo_donantes_handler, []},
+      {"/api/donantes/:id", p44_http_catalogo_donantes_handler, []},
+      {"/api/lotes", p44_http_lotes_handler, []},
+      {"/api/lotes/:id", p44_http_lotes_handler, []},
+      {"/api/lotes/:id/unidades", p44_http_lote_unidades_handler, []},
       {"/metrics", p44_http_metricas_handler, []}
     ]}
   ]),

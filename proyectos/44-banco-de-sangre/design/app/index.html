@@ -35,15 +35,20 @@
     .lot-card strong{font-size:1.1rem;color:#801b2d}.lot-card .count{float:right;font-size:1.1rem;font-weight:750}.lot-card small{display:block;color:#617182;margin-top:5px}
     .lot-summary{display:flex;flex-wrap:wrap;gap:8px;margin:14px 0}.lot-summary span{border-radius:7px;background:#f2f4f7;padding:7px 10px;font-size:.85rem}
     .lot-filter{display:flex;align-items:center;gap:9px;min-width:0;flex:none;font-weight:500}.lot-filter input{width:auto}
-    #view-inventario,#view-lotes,#view-procesos,#view-bitacora{display:none}footer{max-width:1180px;margin:0 auto 30px;padding:0 20px;color:#617182;font-size:.85rem}
-    @media(max-width:760px){.lot-layout{grid-template-columns:1fr}}
-    @media(max-width:680px){header{padding:16px}main{padding:14px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:15px}.stat{padding:12px}.stat strong{font-size:1.4rem}.row .actions{justify-content:flex-start}nav{display:grid;grid-template-columns:repeat(4,1fr)}nav button{padding:10px 2px;font-size:.78rem}}
+    .donor-layout{display:grid;grid-template-columns:minmax(240px,320px) minmax(0,1fr);gap:16px;align-items:start}
+    .donor-card{width:100%;text-align:left;border:1px solid #dce3ea;border-radius:10px;background:#fff;color:inherit;padding:12px}
+    .donor-card:hover,.donor-card[aria-pressed="true"]{border-color:#801b2d;background:#fff8f9}.donor-card[aria-pressed="true"]{box-shadow:inset 4px 0 #801b2d}
+    .donor-card strong{display:block;color:#801b2d}.donor-card small{display:block;color:#617182;margin-top:3px}
+    details.panel summary{cursor:pointer;font-weight:700;font-size:1.15rem;margin-bottom:10px}details.panel form{margin-top:14px}
+    #view-inventario,#view-lotes,#view-donantes,#view-procesos,#view-bitacora{display:none}footer{max-width:1180px;margin:0 auto 30px;padding:0 20px;color:#617182;font-size:.85rem}
+    @media(max-width:760px){.lot-layout,.donor-layout{grid-template-columns:1fr}}
+    @media(max-width:680px){header{padding:16px}main{padding:14px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:15px}.stat{padding:12px}.stat strong{font-size:1.4rem}.row .actions{justify-content:flex-start}nav{display:grid;grid-template-columns:repeat(5,1fr)}nav button{padding:10px 1px;font-size:.71rem}}
   </style>
 </head>
 <body>
   <header><div><h1>Banco de sangre</h1><p>Simulación educativa · Erlang/OTP · datos ficticios</p></div><span class="status" id="status">Conectando...</span></header>
   <main>
-    <nav aria-label="Secciones"><button data-view="inventario">Inventario</button><button data-view="lotes">Lotes</button><button data-view="procesos">Procesos</button><button data-view="bitacora">Bitácora</button></nav>
+    <nav aria-label="Secciones"><button data-view="inventario">Inventario</button><button data-view="lotes">Lotes</button><button data-view="donantes">Donantes</button><button data-view="procesos">Procesos</button><button data-view="bitacora">Bitácora</button></nav>
     <div id="notice" class="notice" role="status" aria-live="polite"></div>
     <section id="view-inventario">
       <div class="stats" id="stats"></div>
@@ -56,15 +61,29 @@
       <div class="panel"><h2>Existencias disponibles</h2><p class="muted">Vista general por tipo y componente. Para explorar las unidades de cada lote, abre <a href="#lotes">Lotes</a>.</p><div id="stock" class="grid"></div></div>
     </section>
     <section id="view-lotes">
-      <div class="panel"><h2>Lotes registrados</h2><p class="muted">Selecciona un lote para ver sus unidades reales, existencias y caducidades. Los lotes sin unidades disponibles siguen visibles al desactivar el filtro.</p>
+      <div class="panel"><h2>Lotes registrados</h2><p class="muted">Selecciona un lote para ver sus unidades reales, existencias y caducidades. Los lotes vacíos o sin unidades disponibles siguen visibles al desactivar el filtro.</p>
         <label class="lot-filter"><input id="only-available-lots" type="checkbox" checked> Solo lotes con unidades disponibles</label></div>
+      <details class="panel" id="create-lot-details"><summary>Crear un lote</summary><p class="muted">Elige el componente a almacenar. El lote comienza vacío; después añade unidades de donantes registrados.</p>
+        <form id="create-lot-form"><label>Nombre del lote<input name="nombre" maxlength="80" placeholder="Ej. Plasma noviembre" required></label>
+          <label>Componente<select name="componente"><option value="globulos_rojos">Glóbulos rojos</option><option value="plasma">Plasma</option><option value="plaquetas">Plaquetas</option></select></label><button class="primary" type="submit">Crear lote</button></form></details>
       <div class="lot-layout"><div id="lot-list" class="lot-list" aria-label="Lotes"></div><div class="panel" id="lot-detail" aria-live="polite"></div></div>
+      <div class="panel" id="add-unit-panel" hidden><h2>Añadir una unidad al lote seleccionado</h2><p class="muted">Una unidad por donante y componente en cada lote. La caducidad se calcula automáticamente: rojos 42 días, plasma 365 días o plaquetas 7 días. Si falta el donante, regístralo en <a href="#donantes">Donantes</a>.</p>
+        <form id="add-unit-form"><label>Donante registrado<select id="lot-donor" name="donante" required></select></label><button class="primary" type="submit">Añadir unidad</button></form></div>
       <div class="panel"><h2>Simular falla de refrigerador</h2><p class="muted">Acción irreversible: compromete las unidades del lote. Revisa su contenido antes de confirmar.</p>
-        <form id="fridge-form"><label>Lote / refrigerador<select name="id"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></label><button class="secondary danger" type="submit">Simular falla</button></form></div>
+        <form id="fridge-form"><label>Lote / refrigerador<select name="id" id="fridge-lot"></select></label><button class="secondary danger" type="submit">Simular falla</button></form></div>
+    </section>
+    <section id="view-donantes">
+      <div class="panel"><h2>Donantes registrados</h2><p class="muted">Los donantes de la simulación original no tienen ficha personal: se muestran su ID, tipo y unidades, sin inventar edad ni peso. Usa solo alias y datos ficticios en altas nuevas.</p>
+        <div class="tools"><input id="donor-search" aria-label="Buscar donante por ID o alias" placeholder="Buscar ID o alias"><select id="donor-type-filter" aria-label="Filtrar tipo"><option value="">Todos los tipos</option><option value="o_neg">O−</option><option value="o_pos">O+</option><option value="a_neg">A−</option><option value="a_pos">A+</option><option value="b_neg">B−</option><option value="b_pos">B+</option><option value="ab_neg">AB−</option><option value="ab_pos">AB+</option></select></div>
+        <p class="muted" id="donor-count"></p></div>
+      <div class="donor-layout"><div><div id="donor-list" class="lot-list"></div><button class="secondary" id="show-more-donors" type="button" hidden style="margin-top:12px;width:100%">Ver más donantes</button></div><div class="panel" id="donor-detail"></div></div>
+      <details class="panel"><summary>Registrar donante ficticio</summary><p class="muted">No uses nombres, teléfonos ni datos médicos reales. Edad y peso son opcionales; registrarlos no equivale a certificar aptitud para donar.</p>
+        <form id="create-donor-form"><label>Alias ficticio<input name="alias" maxlength="80" placeholder="Ej. Voluntario A" required></label><label>Tipo sanguíneo<select name="tipo"><option value="o_neg">O−</option><option value="o_pos">O+</option><option value="a_neg">A−</option><option value="a_pos">A+</option><option value="b_neg">B−</option><option value="b_pos">B+</option><option value="ab_neg">AB−</option><option value="ab_pos">AB+</option></select></label>
+        <label>Edad simulada (opcional)<input name="edad" type="number" min="18" max="65" placeholder="18–65"></label><label>Peso simulado en kg (opcional)<input name="peso_kg" type="number" min="50" max="250" placeholder="≥50"></label><button class="primary" type="submit">Registrar</button></form></details>
+      <details class="panel" id="retire-donor-details"><summary>Retiro por prueba positiva tardía</summary><p class="muted">Retira las unidades de un donante y reporta las ya despachadas para seguimiento.</p>
+        <form id="donor-form"><label>ID del donante<input id="retire-donor-id" name="id" type="number" min="1" required></label><label>Motivo<input name="motivo" placeholder="Ej. prueba positiva tardía" maxlength="200" required></label><button class="secondary danger" type="submit">Retirar por donante</button></form></details>
     </section>
     <section id="view-procesos"><div class="panel"><h2>Procesos de unidades</h2><p class="muted">Cada fila es un proceso gen_statem. Puedes despachar tu reserva, liberarla o retirar una unidad no entregada.</p>
-      <div class="panel"><h3>Retiro por prueba positiva tardía</h3><p class="muted">Retira las unidades de un donante y reporta las ya despachadas para seguimiento.</p>
-        <form id="donor-form"><label>ID del donante<input name="id" type="number" min="1" required></label><label>Motivo<input name="motivo" placeholder="Ej. prueba positiva tardía" maxlength="200" required></label><button class="secondary danger" type="submit">Retirar por donante</button></form></div>
       <div class="tools"><input id="search" aria-label="Buscar unidad o donante" placeholder="Buscar ID o donante"><select id="state-filter" aria-label="Filtrar estado"><option value="">Todos los estados</option><option value="disponible">Disponibles</option><option value="reservada">Reservadas</option><option value="asignada">Despachadas</option><option value="retirada">Retiradas</option><option value="comprometida">Comprometidas</option><option value="caducada">Caducadas</option></select><select id="component-filter" aria-label="Filtrar componente"><option value="">Todos los componentes</option><option value="globulos_rojos">Glóbulos rojos</option><option value="plasma">Plasma</option><option value="plaquetas">Plaquetas</option></select></div>
       <p id="process-count" class="muted"></p><div id="unit-list" class="list"></div></div></section>
     <section id="view-bitacora"><div class="panel"><h2>Bitácora de trazabilidad</h2><p class="muted">Últimos 100 eventos reales. Puedes filtrar por ID de unidad; las asignaciones indican el receptor.</p>
@@ -77,7 +96,7 @@
     const componente={globulos_rojos:'Glóbulos rojos',plasma:'Plasma',plaquetas:'Plaquetas'};
     const nombre=v=>tipo[v]||componente[v]||v||'—';
     const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
-    let unidades=[],metricas={},eventos=[],vista='inventario',loteSeleccionado=null,avisoTimer;
+    let unidades=[],lotes=[],donantes=[],metricas={},eventos=[],vista='inventario',loteSeleccionado=null,donanteSeleccionado=null,donorLimit=25,avisoTimer;
     async function api(path, options={}){
       const r=await fetch(path,{cache:'no-store',...options});
       const body=await r.json();
@@ -86,10 +105,10 @@
     }
     const post=(path,data)=>api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
     function aviso(texto,error=false){const el=$('notice');el.textContent=texto;el.className='notice'+(error?' error':'');el.style.display='block';clearTimeout(avisoTimer);avisoTimer=setTimeout(()=>el.style.display='none',9000)}
-    function navegar(v){vista=['inventario','lotes','procesos','bitacora'].includes(v)?v:'inventario';
-      for(const pagina of ['inventario','lotes','procesos','bitacora'])$('view-'+pagina).style.display=pagina===vista?'block':'none';
+    function navegar(v){vista=['inventario','lotes','donantes','procesos','bitacora'].includes(v)?v:'inventario';
+      for(const pagina of ['inventario','lotes','donantes','procesos','bitacora'])$('view-'+pagina).style.display=pagina===vista?'block':'none';
       document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.view===vista?'page':'false'));
-      if(vista==='bitacora')cargarBitacora();else if(vista==='procesos'||vista==='lotes')cargarDatos();
+      if(vista==='bitacora')cargarBitacora();else if(vista==='procesos'||vista==='lotes'||vista==='donantes')cargarDatos();
     }
     document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{location.hash=b.dataset.view}));
     window.addEventListener('hashchange',()=>navegar(location.hash.slice(1)));
@@ -102,24 +121,46 @@
     function pintarLotes(){
       const grupos=new Map();
       for(const u of unidades){if(!grupos.has(u.lote))grupos.set(u.lote,[]);grupos.get(u.lote).push(u)}
-      const lotes=[...grupos].sort(([a],[b])=>a-b);
-      const visibles=lotes.filter(([,lista])=>!$('only-available-lots').checked||lista.some(u=>u.estado==='disponible'));
-      if(!visibles.some(([id])=>id===loteSeleccionado))loteSeleccionado=visibles.length?visibles[0][0]:null;
-      $('lot-list').innerHTML=visibles.map(([id,lista])=>{
-        const disponibles=lista.filter(u=>u.estado==='disponible');
-        const componentes=[...new Set(lista.map(u=>nombre(u.componente)))].join(', ');
-        return `<button type="button" class="lot-card" data-lot="${id}" aria-pressed="${id===loteSeleccionado}"><span class="count">${disponibles.length} disponibles</span><strong>Lote #${id}</strong><small>${escape(componentes)} · ${lista.length} unidades totales</small></button>`;
+      const visibles=lotes.filter(l=>!$('only-available-lots').checked||l.disponibles>0);
+      if(!visibles.some(l=>l.id===loteSeleccionado))loteSeleccionado=visibles.length?visibles[0].id:null;
+      $('lot-list').innerHTML=visibles.map(l=>{
+        return `<button type="button" class="lot-card" data-lot="${l.id}" aria-pressed="${l.id===loteSeleccionado}"><span class="count">${l.disponibles} disponibles</span><strong>${escape(l.nombre)}</strong><small>#${l.id} · ${escape(nombre(l.componente))} · ${l.total} unidades · ${escape(l.estado)}</small></button>`;
       }).join('')||'<p class="muted">No hay lotes con unidades disponibles. Desactiva el filtro para verlos todos.</p>';
-      const lista=grupos.get(loteSeleccionado);
-      if(!lista){$('lot-detail').innerHTML='<h2>Detalle del lote</h2><p class="muted">Selecciona un lote para ver su contenido.</p>';return}
+      const seleccionado=lotes.find(l=>l.id===loteSeleccionado),lista=grupos.get(loteSeleccionado)||[];
+      $('add-unit-panel').hidden=!seleccionado||seleccionado.estado!=='operando';
+      if(!seleccionado){$('lot-detail').innerHTML='<h2>Detalle del lote</h2><p class="muted">Selecciona un lote para ver su contenido.</p>';return}
       const disponibles=lista.filter(u=>u.estado==='disponible');
       const estados={};for(const u of lista)estados[u.estado]=(estados[u.estado]||0)+1;
       const tipos={};for(const u of disponibles){const clave=nombre(u.tipo)+' · '+nombre(u.componente);tipos[clave]=(tipos[clave]||0)+1}
       const vence=disponibles.length?Math.min(...disponibles.map(u=>u.caduca_en)):null;
-      $('lot-detail').innerHTML=`<h2>Lote #${loteSeleccionado}</h2><p class="muted">${lista.length} unidades registradas · ${disponibles.length} disponibles${vence?' · Próximo vencimiento: '+new Date(vence).toLocaleDateString('es-MX'):''}</p>
+      $('lot-detail').innerHTML=`<h2>${escape(seleccionado.nombre)}</h2><p class="muted">Lote #${loteSeleccionado} · ${escape(nombre(seleccionado.componente))} · Refrigerador: ${escape(seleccionado.estado)}<br>${lista.length} unidades registradas · ${disponibles.length} disponibles${vence?' · Próximo vencimiento: '+new Date(vence).toLocaleDateString('es-MX'):''}</p>
         <div class="lot-summary">${Object.entries(estados).map(([e,n])=>`<span>${escape(e)}: <strong>${n}</strong></span>`).join('')}</div>
         <h3>Existencias utilizables</h3><p class="muted">${Object.entries(tipos).map(([t,n])=>`${escape(t)}: ${n}`).join(' · ')||'Ninguna'}</p>
-        <h3>Unidades del lote</h3><div class="list">${lista.sort((a,b)=>a.id-b.id).map(u=>`<div class="row"><div class="info"><strong>#${u.id} · ${escape(nombre(u.tipo))}</strong> · ${escape(nombre(u.componente))}<br><span class="muted">Donante ${u.donante} · Caduca ${new Date(u.caduca_en).toLocaleDateString('es-MX')}</span> <span class="badge ${escape(u.estado)}">${escape(u.estado)}</span></div><button class="secondary" type="button" data-lot-unit="${u.id}">Ver proceso</button></div>`).join('')}</div>`;
+        <h3>Unidades del lote</h3><div class="list">${lista.length?lista.sort((a,b)=>a.id-b.id).map(u=>`<div class="row"><div class="info"><strong>#${u.id} · ${escape(nombre(u.tipo))}</strong> · ${escape(nombre(u.componente))}<br><span class="muted">Donante ${u.donante} · Caduca ${new Date(u.caduca_en).toLocaleDateString('es-MX')}</span> <span class="badge ${escape(u.estado)}">${escape(u.estado)}</span></div><button class="secondary" type="button" data-lot-unit="${u.id}">Ver proceso</button></div>`).join(''):'<p class="muted">Lote vacío. Añade una unidad de un donante registrado.</p>'}</div>`;
+      const select=$('lot-donor'),elegido=select.value;
+      const posibles=donantes.filter(d=>!d.bloqueado&&!lista.some(u=>u.donante===d.id&&u.componente===seleccionado.componente));
+      select.innerHTML=posibles.map(d=>`<option value="${d.id}">#${d.id} · ${escape(d.alias)} (${escape(nombre(d.tipo))})</option>`).join('');
+      if(posibles.some(d=>String(d.id)===elegido))select.value=elegido;
+      $('add-unit-form').querySelector('button').disabled=!posibles.length;
+      const frigorifico=$('fridge-lot'),anterior=frigorifico.value;
+      frigorifico.innerHTML=lotes.map(l=>`<option value="${l.id}">#${l.id} · ${escape(l.nombre)}</option>`).join('');
+      frigorifico.value=lotes.some(l=>String(l.id)===anterior)?anterior:String(loteSeleccionado);
+    }
+    function pintarDonantes(){
+      const q=$('donor-search').value.trim().toLocaleLowerCase(),tipoFiltro=$('donor-type-filter').value;
+      const visibles=donantes.filter(d=>(!tipoFiltro||d.tipo===tipoFiltro)&&(!q||String(d.id).includes(q)||d.alias.toLocaleLowerCase().includes(q)));
+      if(!visibles.some(d=>d.id===donanteSeleccionado))donanteSeleccionado=visibles.length?visibles[0].id:null;
+      $('donor-count').textContent=`${visibles.length} donantes de ${donantes.length} registrados`;
+      $('donor-list').innerHTML=visibles.slice(0,donorLimit).map(d=>`<button class="donor-card" type="button" data-donor="${d.id}" aria-pressed="${d.id===donanteSeleccionado}"><strong>#${d.id} · ${escape(d.alias)}</strong><small>${escape(nombre(d.tipo))} · ${d.total} unidades · ${d.disponibles} disponibles${d.bloqueado?' · BLOQUEADO':''}</small></button>`).join('')||'<p class="muted">No hay donantes con esos filtros.</p>';
+      $('show-more-donors').hidden=visibles.length<=donorLimit;
+      const d=donantes.find(x=>x.id===donanteSeleccionado);
+      if(!d){$('donor-detail').innerHTML='<h2>Ficha del donante</h2><p class="muted">Selecciona un donante.</p>';return}
+      const dato=n=>n===null||n===undefined?'No registrado':escape(n);
+      $('donor-detail').innerHTML=`<h2>${escape(d.alias)}</h2><p class="muted">Donante #${d.id} · ${escape(nombre(d.tipo))} · ${d.bloqueado?'Bloqueado para nuevas unidades':'Sin bloqueo registrado'}</p>
+        <div class="lot-summary"><span>Edad: <strong>${dato(d.edad)}</strong></span><span>Peso (kg): <strong>${dato(d.peso_kg)}</strong></span><span>Alta: <strong>${d.registro_ms?new Date(d.registro_ms).toLocaleDateString('es-MX'):'No registrada'}</strong></span><span>Unidades: <strong>${d.total}</strong></span><span>Disponibles: <strong>${d.disponibles}</strong></span></div>
+        <p class="muted">La edad y el peso de los donantes originales no se registraron. No se verifica aptitud médica ni el intervalo entre donaciones.</p>
+        <button class="secondary danger" type="button" data-retire-donor="${d.id}">Retirar unidades de este donante</button>
+        <h3 style="margin-top:18px">Unidades vinculadas</h3><div class="list">${d.unidades.length?d.unidades.sort((a,b)=>a.id-b.id).map(u=>`<div class="row"><div class="info"><strong>Unidad #${u.id}</strong> · ${escape(nombre(u.componente))} · Lote #${u.lote} <span class="badge ${escape(u.estado)}">${escape(u.estado)}</span></div><button class="secondary" type="button" data-donor-unit="${u.id}">Ver proceso</button></div>`).join(''):'<p class="muted">Este donante todavía no tiene unidades registradas.</p>'}</div>`;
     }
     function pintarUnidades(){
       const q=$('search').value.trim(),estado=$('state-filter').value,comp=$('component-filter').value;
@@ -130,7 +171,7 @@
     function pintarEventos(){
       $('events').innerHTML=eventos.map(e=>`<article class="history"><time>${new Date(e.fecha_ms).toLocaleString('es-MX')}</time><div><strong>Unidad #${e.unidad} · ${escape(e.estado||e.evento)}</strong></div><div class="muted">${escape(e.descripcion)}</div></article>`).join('')||'<p class="muted">No hay eventos para esa búsqueda.</p>';
     }
-    async function cargarDatos(){try{[metricas,{unidades}]=await Promise.all([api('/metrics'),api('/api/unidades')]);$('status').textContent='● Sistema en línea';pintarInventario();pintarUnidades();pintarLotes()}catch(e){$('status').textContent='● Sin conexión';aviso('No se pudo consultar el sistema: '+e.message,true)}}
+    async function cargarDatos(){try{const [m,u,l,d]=await Promise.all([api('/metrics'),api('/api/unidades'),api('/api/lotes'),api('/api/donantes')]);metricas=m;unidades=u.unidades;lotes=l.lotes;donantes=d.donantes;$('status').textContent='● Sistema en línea';pintarInventario();pintarUnidades();pintarLotes();pintarDonantes()}catch(e){$('status').textContent='● Sin conexión';aviso('No se pudo consultar el sistema: '+e.message,true)}}
     async function cargarBitacora(){try{const id=$('history-id').value;({eventos}=await api('/api/bitacora'+(id?'?unidad='+encodeURIComponent(id):'')));pintarEventos()}catch(e){aviso('No se pudo leer la bitácora: '+e.message,true)}}
     $('reserve-form').addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,b=f.querySelector('button');b.disabled=true;
       try{const d=Object.fromEntries(new FormData(f)),r=await post('/api/solicitudes',{receptor:d.receptor,componente:d.componente,solicitante:d.solicitante.trim(),ttl_ms:Number(d.minutos)*60000});
@@ -147,6 +188,21 @@
     $('only-available-lots').addEventListener('change',pintarLotes);
     $('lot-list').addEventListener('click',e=>{const b=e.target.closest('button[data-lot]');if(!b)return;loteSeleccionado=Number(b.dataset.lot);pintarLotes();if(innerWidth<=760)$('lot-detail').scrollIntoView({behavior:'smooth',block:'start'})});
     $('lot-detail').addEventListener('click',e=>{const b=e.target.closest('button[data-lot-unit]');if(!b)return;$('search').value=b.dataset.lotUnit;$('state-filter').value='';$('component-filter').value='';location.hash='procesos';pintarUnidades()});
+    $('create-lot-form').addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,b=f.querySelector('button'),d=Object.fromEntries(new FormData(f));b.disabled=true;
+      try{const r=await post('/api/lotes',{nombre:d.nombre.trim(),componente:d.componente});loteSeleccionado=r.id;$('only-available-lots').checked=false;f.reset();$('create-lot-details').open=false;await cargarDatos();location.hash='lotes';aviso(`Lote #${r.id} creado. Selecciona un donante para añadir su primera unidad.`)}catch(err){aviso('No se pudo crear el lote: '+err.message,true)}finally{b.disabled=false}
+    });
+    $('add-unit-form').addEventListener('submit',async e=>{e.preventDefault();const b=e.currentTarget.querySelector('button'),donante=Number($('lot-donor').value);if(!loteSeleccionado||!donante)return;
+      b.disabled=true;try{const r=await post(`/api/lotes/${loteSeleccionado}/unidades`,{donante});aviso(`Unidad #${r.id} añadida al lote #${loteSeleccionado}.`);await cargarDatos()}catch(err){aviso('No se pudo añadir la unidad: '+err.message,true)}finally{b.disabled=false}
+    });
+    $('create-donor-form').addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,b=f.querySelector('button'),d=Object.fromEntries(new FormData(f));b.disabled=true;
+      try{const r=await post('/api/donantes',{alias:d.alias.trim(),tipo:d.tipo,edad:d.edad?Number(d.edad):null,peso_kg:d.peso_kg?Number(d.peso_kg):null});f.reset();donanteSeleccionado=r.id;$('donor-search').value=String(r.id);$('donor-type-filter').value='';await cargarDatos();location.hash='donantes';aviso(`Donante ficticio #${r.id} registrado. Puedes añadir su unidad en Lotes.`)}catch(err){aviso('No se pudo registrar el donante: '+err.message,true)}finally{b.disabled=false}
+    });
+    $('donor-list').addEventListener('click',e=>{const b=e.target.closest('button[data-donor]');if(!b)return;donanteSeleccionado=Number(b.dataset.donor);pintarDonantes();if(innerWidth<=760)$('donor-detail').scrollIntoView({behavior:'smooth',block:'start'})});
+    $('donor-detail').addEventListener('click',e=>{const unidad=e.target.closest('button[data-donor-unit]');if(unidad){$('search').value=unidad.dataset.donorUnit;$('state-filter').value='';$('component-filter').value='';location.hash='procesos';pintarUnidades();return}
+      const retirar=e.target.closest('button[data-retire-donor]');if(retirar){$('retire-donor-id').value=retirar.dataset.retireDonor;$('retire-donor-details').open=true;$('retire-donor-details').scrollIntoView({behavior:'smooth',block:'start'})}
+    });
+    $('show-more-donors').addEventListener('click',()=>{donorLimit+=25;pintarDonantes()});
+    for(const id of ['donor-search','donor-type-filter'])$(id).addEventListener('input',()=>{donorLimit=25;pintarDonantes()});
     $('fridge-form').addEventListener('submit',async e=>{e.preventDefault();const id=new FormData(e.currentTarget).get('id');if(!confirm(`¿Confirmas la falla del refrigerador ${id}? No se puede deshacer.`))return;
       try{const r=await post(`/api/refrigeradores/${id}/falla`,{});aviso(`Refrigerador ${id} fallado; ${r.comprometidas} unidades afectadas.`);await cargarDatos()}catch(err){aviso('No se pudo simular la falla: '+err.message,true)}
     });

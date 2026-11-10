@@ -22,13 +22,17 @@ en `127.0.0.1:8080`; nginx publica la app responsive de `design/app/` y la API
 por HTTP/80. Las pantallas originales de Stitch siguen como maquetas de diseño.
 La app incluye una sección **Lotes**: agrupa las unidades por lote, muestra
 cuántas siguen disponibles y permite abrir el detalle con estados, tipos y
-caducidades; desde ahí se puede abrir cada proceso.
+caducidades; desde ahí se puede abrir cada proceso. Se pueden crear lotes vacíos
+y añadir una unidad por donante y componente. **Donantes** muestra las fichas
+inferidas de la bitácora y permite registrar donantes ficticios con alias,
+tipo, edad y peso opcionales. Los datos no registrados no se inventan. Un
+donante retirado por prueba positiva queda bloqueado para crear nuevas unidades.
 
 Se desarrolló y probó en una máquina virtual Raspberry Pi 5 (aarch64) de Corellium con Debian 11, con **Erlang/OTP 27.3.4.19** (compilado con kerl) y **rebar3 3.28.0**. Los paquetes de Debian 11 no traen OTP 27 ni rebar3, y el repositorio de seguridad de esa versión pasó a `archive.debian.org`.
 
 ```bash
 rebar3 compile
-rebar3 eunit          # 74 pruebas
+rebar3 eunit          # 76 pruebas
 rebar3 shell
 ```
 
@@ -65,6 +69,7 @@ p44_banco_de_sangre_sup   (rest_for_one)
 │    └─ p44_refrigerador    uno por refrigerador (lote)
 ├─ p44_repoblador          recrea unidades y refrigeradores desde la bitácora tras una caída
 ├─ p44_inventario          índice de disponibles + política de asignación
+├─ p44_catalogo            altas serializadas de donantes, lotes y unidades
 ├─ p44_alertas             vigila niveles por tipo y componente
 └─ p44_banco_de_sangre_server  (esqueleto original del repo)
 ```
@@ -74,6 +79,7 @@ p44_banco_de_sangre_sup   (rest_for_one)
 - **`rest_for_one` en la raíz:** el orden de arranque es el orden de dependencia. Si cae un hijo, se reinician él y todos los que van después de él. La bitácora va antes que las unidades porque las unidades se recuperan desde ella.
 - **Unidades (`permanent`, supervisor dinámico):** si una unidad muere, se reinicia sola y **reconstruye su estado desde la bitácora** (primer evento = datos base, último evento = estado actual, incluida una reserva viva).
 - **Bitácora:** cada transición se anota **antes** de cambiar de estado. Es además la trazabilidad pedida por el enunciado. Escribe en dos lugares: una tabla ETS pública (las unidades escriben directo, sin cuello de botella) y un archivo **DETS** en `priv/p44_bitacora.dets`, que sobrevive a que se caiga la BEAM completa. Al arrancar, el contenido de DETS se vuelca a ETS; por eso la trazabilidad no se pierde ni con un reinicio del nodo.
+- **Corrección de persistencia:** se detectó en el despliegue AWS que `unique_integer/1` podía repetir claves DETS tras reiniciar la VM y que `ets:select/2` no garantizaba el orden cronológico necesario para reconstruir estados. Ahora cada registro tiene clave única entre reinicios, el historial se ordena por fecha y las unidades/refrigeradores buscan explícitamente su evento de creación. Las 300 unidades de la demo se recuperaron sin borrar la bitácora.
 - **Inventario:** el índice es solo una *pista*. La autoridad es la unidad: si el índice está desactualizado, la unidad rechaza la reserva y se prueba con la siguiente, así que nunca se asigna algo inválido. Si el inventario muere, se reconstruye preguntándole a las unidades. Las unidades le avisan sus cambios con un `cast` que nunca bloquea.
 - **Repoblador:** los supervisores dinámicos pierden a sus hijos si ellos mismos se caen. Este proceso arranca después de ambos y vuelve a crear unidades y refrigeradores desde la bitácora. Se descubrió al planear la prueba de caos y se corrigió antes de correrla.
 - **Refrigerador:** su estado (`operando`/`fallado`) también va a la bitácora. Si se cae después de fallar, al reiniciarse vuelve a comprometer el lote (operación idempotente), incluidas unidades que llegaron mientras tanto.
@@ -86,6 +92,7 @@ p44_banco_de_sangre_sup   (rest_for_one)
 | `p44_unidad` | Unidad de sangre (`gen_statem`): reservar, asignar, liberar, retirar, comprometer, caducar |
 | `p44_bitacora` | Historial por unidad y por refrigerador; consultas para repoblar |
 | `p44_inventario` | Índice FEFO y política de asignación con sustitución por compatibles |
+| `p44_catalogo` | Registra donantes ficticios y crea lotes/unidades de forma serializada; recupera metadatos desde DETS |
 | `p44_compatibilidad` | Reglas puras: quién puede donarle a quién y orden de preferencia |
 | `p44_refrigerador` | Falla de refrigeración: compromete un lote |
 | `p44_alertas` | Niveles críticos por tipo y componente, con aviso por transición |
@@ -131,6 +138,11 @@ La aplicación arranca un servidor cowboy en el puerto `8080` (configurable en
 | `/api/bitacora?unidad=ID` | `GET` | Últimos 100 eventos reales (opcionalmente filtrados) |
 | `/api/refrigeradores/:id/falla` | `POST` | Simular falla de un lote |
 | `/api/donantes/:id/retirar` | `POST` | Retirar unidades de donante con prueba positiva tardía |
+| `/api/donantes` y `/api/donantes/:id` | `GET` | Fichas y unidades vinculadas; datos no registrados quedan nulos |
+| `/api/donantes` | `POST` | Registrar donante ficticio con alias, tipo y edad/peso opcionales |
+| `/api/lotes` y `/api/lotes/:id` | `GET` | Lotes con estado y existencias, incluidos los vacíos |
+| `/api/lotes` | `POST` | Crear lote vacío para un componente |
+| `/api/lotes/:id/unidades` | `POST` | Añadir una unidad de donante existente al lote |
 
 Ejemplo:
 
@@ -246,7 +258,7 @@ natural de `p44_donantes`.
 - [x] API HTTP con cowboy: inventario, solicitudes, alertas SSE y `/metrics`.
 - [x] Pantallas de Stitch en `design/` y `design/DESIGN.md` (dashboard, detalle de unidad y bitácora; las tres exportadas de Stitch).
 - [x] Release relx (`rebar3 as prod release`) y servicio systemd en `deploy/`.
-- [x] **74 pruebas** con `rebar3 eunit` en verde.
+- [x] **76 pruebas** con `rebar3 eunit` en verde.
 
 **Pendiente / extensiones naturales:**
 - [x] Exportar de Stitch la pantalla de bitácora (`design/bitacora/`): export real de Stitch recibido y descomprimido.

@@ -38,8 +38,9 @@ Para permitir acceso desde Internet, en EC2 → Instancias → Grupo de segurida
 → Reglas de entrada, añadir **HTTP TCP 80 desde 0.0.0.0/0** (y `::/0` si
 se usa IPv6). SSH 22 debe permanecer restringido a la IP del administrador.
 Visitar `http://IP_PUBLICA/`: abre la app responsive en `/app/` con pestañas
-Inventario, Lotes, Procesos y Bitácora. En Lotes se puede explorar cada lote y
-sus unidades sin modificar el inventario. Las API están en `/api/...` y `/metrics`.
+Inventario, Lotes, Donantes, Procesos y Bitácora. En Lotes se puede explorar
+cada lote o crear uno y añadir unidades. Donantes permite revisar las fichas
+existentes y registrar alias ficticios. Las API están en `/api/...` y `/metrics`.
 
 **Importante:** es una simulación educativa sin autenticación ni TLS. La API
 las API de reservas, despacho, retiro y fallas quedan accesibles a cualquiera
@@ -47,3 +48,10 @@ con la URL y pueden alterar el inventario simulado. No usar datos médicos reale
 La IP pública de Academy
 puede cambiar al reiniciar el laboratorio; el profesor podrá acceder solo
 mientras la instancia y el laboratorio estén activos.
+
+La bitácora de producción está en el directorio de trabajo efectivo del
+release: `_build/prod/rel/p44_banco_de_sangre/priv/p44_bitacora.dets`.
+Respáldala antes de reconstruir el release o mover la instalación. Las fichas
+de donantes y lotes nuevos también se guardan allí; las fichas originales solo
+contienen datos inferidos de las unidades. No ejecutar `p44_simulador:reiniciar/0`
+en la demo pública, porque elimina expresamente esa bitácora.
