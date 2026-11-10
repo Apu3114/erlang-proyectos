@@ -10,9 +10,9 @@ Proyecto individual.
 
 | Rol | Integrante |
 |---|---|
-| Backend (OTP) | Apu |
-| Frontend (Stitch + cowboy) | Apu |
-| Ops/QA | Apu |
+| Backend (OTP) | Luis Adao Leonel Duran Ponce |
+| Frontend (Stitch + cowboy) | Luis Adao Leonel Duran Ponce |
+| Ops/QA | Luis Adao Leonel Duran Ponce |
 
 ## Entorno y arranque
 
