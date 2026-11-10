@@ -28,6 +28,12 @@ inferidas de la bitácora y permite registrar donantes ficticios con alias,
 tipo, edad y peso opcionales. Los datos no registrados no se inventan. Un
 donante retirado por prueba positiva queda bloqueado para crear nuevas unidades.
 
+**Entrega:** [documentación para Gist](docs/ENTREGA_GIST.md) y
+[guion de grabación en Loom](docs/GUION_LOOM.md). El logo SVG original de la
+app está en `design/app/logo.svg`. El video y la captura de la app real deben
+ser grabados por el autor; el enunciado de `problema/readme.md` no especifica
+requisitos adicionales de Loom ni Gist.
+
 Se desarrolló y probó en una máquina virtual Raspberry Pi 5 (aarch64) de Corellium con Debian 11, con **Erlang/OTP 27.3.4.19** (compilado con kerl) y **rebar3 3.28.0**. Los paquetes de Debian 11 no traen OTP 27 ni rebar3, y el repositorio de seguridad de esa versión pasó a `archive.debian.org`.
 
 ```bash

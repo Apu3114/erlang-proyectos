@@ -1,0 +1,18 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" role="img" aria-labelledby="title desc">
+  <title id="title">Banco de sangre</title>
+  <desc id="desc">Gota de sangre con cruz médica blanca</desc>
+  <defs>
+    <linearGradient id="fondo" x1="0" y1="0" x2="1" y2="1">
+      <stop stop-color="#b93347"/>
+      <stop offset="1" stop-color="#791b31"/>
+    </linearGradient>
+    <linearGradient id="gota" x1="0" y1="0" x2="0" y2="1">
+      <stop stop-color="#fff7f4"/>
+      <stop offset="1" stop-color="#ffdce0"/>
+    </linearGradient>
+  </defs>
+  <rect width="64" height="64" rx="17" fill="url(#fondo)"/>
+  <path d="M32 8C24 20 15 29 15 39a17 17 0 0 0 34 0C49 29 40 20 32 8Z" fill="url(#gota)"/>
+  <path d="M29 26h6v9h9v6h-9v9h-6v-9h-9v-6h9z" fill="#a5293c"/>
+  <path d="M20 40c0 6 4 11 10 13" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round" opacity=".7"/>
+</svg>
