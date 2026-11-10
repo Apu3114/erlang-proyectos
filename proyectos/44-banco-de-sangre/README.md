@@ -134,8 +134,11 @@ sobre datos externos) y responden `400`, `404` o `503` con JSON propio
 ## Pantallas (Google Stitch)
 
 El diseño de interfaz está en `design/` y se describe en `design/DESIGN.md`.
-Se generó con **Google Stitch** a partir de `design/PROMPT_STITCH.md`; son
-mockups estáticos en HTML + Tailwind, todavía sin conectar a la API.
+Las pantallas de dashboard y detalle de unidad se exportaron de **Google
+Stitch** a partir de `design/PROMPT_STITCH.md`; son mockups estáticos en HTML +
+Tailwind, todavía sin conectar a la API. **Falta el export de la pantalla de
+bitácora** (`design/bitacora/`): está referenciada en `DESIGN.md` pero no se
+incluyó en el export, así que no se presenta como si existiera.
 
 ## Persistencia y despliegue
 
@@ -186,7 +189,7 @@ _(Estos son los valores de la corrida de referencia; sustituir por los de tu cap
 - **Umbral crítico:** 5 unidades por tipo y componente, configurable (`umbral_default` y `umbrales` en el entorno de la aplicación). El enunciado no da cifras.
 - **Compatibilidad:** glóbulos rojos con ABO y Rh. Plasma y plaquetas comparten una regla simplificada (ABO invertido, Rh ignorado); las plaquetas reales tienen reglas propias.
 - **Tiempo comprimido:** las 20 solicitudes del accidente ocurren de inmediato, no repartidas en una hora real.
-- **Vida útil usada:** 42 días (rojos), 7 (plaquetas) y 365 (plasma), tomando el extremo alto del rango del enunciado; la vida restante de cada unidad se sortea entre 15 % y 100 %.
+- **Vida útil usada:** 42 días (rojos), 7 (plaquetas) y 365 (plasma), tomando el extremo alto del rango del enunciado; la vida restante de cada unidad se sortea entre 15 % y 100 %. Para el plasma, la NOM-253-SSA1-2012 (tabla 25) permite hasta 36 meses a ≤ −25 °C y 3 meses entre −18 °C y −25 °C; el simulador no modela la temperatura y usa el valor del enunciado.
 - **Lotes y refrigeradores:** un refrigerador por lote; lotes 1–3 para rojos, 4 para plaquetas, 5–6 para plasma. Las condiciones distintas de almacenamiento (temperatura, agitación, congelado) no se modelan, solo la falla.
 - **Donantes:** un donante comparte identificador entre los componentes del mismo tipo (rojos, plasma y plaquetas de una misma donación).
 - **Emergencia sin tipificar:** se modela como una solicitud de O negativo. No hay una cola con prioridad separada para emergencias.
@@ -203,7 +206,7 @@ también disponible en `gob.mx/cnts`.
 | Cifra | Lo usado en el código | Verificación | Fuente |
 |---|---|---|---|
 | Vida útil de glóbulos rojos | 42 días | **Confirmado.** Concentrado eritrocitario, refrigerado entre 1 °C y 6 °C, hasta 42 días (la vigencia exacta depende de la solución anticoagulante/preservante usada, capítulo 8 de la norma) | NOM-253-SSA1-2012, cap. 8 |
-| Vida útil del plasma congelado | 365 días | **Confirmado.** Plasma fresco congelado a −18 °C o menos, hasta un año | NOM-253-SSA1-2012, cap. 8 |
+| Vida útil del plasma congelado | 365 días | **Discrepancia con la norma.** El enunciado dice "hasta 1 año" y el código usa 365 días. La NOM-253-SSA1-2012, apartado 8.6.1.3, tabla 25, fija **36 meses a ≤ −25 °C** y **3 meses entre −18 °C y −25 °C** (no "1 año"). Se conserva 365 días porque es el valor del enunciado y queda dentro del rango normativo; el modelo no distingue la temperatura de almacenamiento | NOM-253-SSA1-2012, apartado 8.6.1.3, tabla 25 |
 | Vida útil de plaquetas | 7 días | **Confirmado.** En sistema cerrado, con agitación continua suave a +20 °C a +24 °C, la vigencia es de **cinco días después de la donación, ampliable hasta 7 días** si se emplean sistemas de reducción bacteriana o métodos de detección de contaminación bacteriana (tabla 19). El código usa el extremo alto, por eso 7 días | NOM-253-SSA1-2012, apartado 8.4.5, tabla 19 |
 | Intervalo mínimo entre donaciones de sangre total | — (no se modela) | **Confirmado.** 8 semanas entre dos donaciones de sangre total (o entre una de sangre total y una eritroaféresis de bolsa única); 3 meses si la segunda es eritroaféresis de bolsa doble; 4 semanas entre sangre total y una plaquetaféresis/plasmaféresis sin extracción de eritrocitos (tabla 9 de la norma) | NOM-253-SSA1-2012, apartado 7.2.12, tabla 9 |
 | Máximo de donaciones de sangre total al año | — (no se modela) | **Confirmado.** 4 veces al año para hombres, 3 para mujeres | NOM-253-SSA1-2012, apartado 7.2.11 |
@@ -222,11 +225,12 @@ natural de `p44_donantes`.
 - [x] Simulador del escenario y prueba de caos (6 experimentos).
 - [x] Bitácora persistente en DETS: sobrevive a reinicio del nodo y al `kill` del proceso.
 - [x] API HTTP con cowboy: inventario, solicitudes, alertas SSE y `/metrics`.
-- [x] Pantallas de Stitch en `design/` y `design/DESIGN.md`.
+- [x] Pantallas de Stitch en `design/` y `design/DESIGN.md` (dashboard y detalle de unidad; falta el export de bitácora).
 - [x] Release relx (`rebar3 as prod release`) y servicio systemd en `deploy/`.
 - [x] **71 pruebas** con `rebar3 eunit` en verde.
 
 **Pendiente / extensiones naturales:**
+- [ ] Exportar de Stitch la pantalla de bitácora (`design/bitacora/`) o reconstruirla localmente marcándola como tal.
 - [ ] Conectar las pantallas estáticas de Stitch a la API real.
 - [ ] Replicar o respaldar el archivo DETS (el disco sigue siendo el punto único de falla).
 - [ ] Reglas de compatibilidad propias para plaquetas (hoy comparten la simplificación del plasma).

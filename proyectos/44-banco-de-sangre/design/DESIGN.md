@@ -1,14 +1,14 @@
 # Diseño de interfaz — #44 Banco de sangre
 
-Generado con **Google Stitch** a partir del prompt en `PROMPT_STITCH.md`. Tres
-pantallas, exportadas como HTML + Tailwind autocontenido (sin build, se abren
-directo en el navegador):
+Generado con **Google Stitch** a partir del prompt en `PROMPT_STITCH.md`. El
+export incluye dos de las tres pantallas, como HTML + Tailwind autocontenido
+(sin build, se abren directo en el navegador):
 
 | Pantalla | Carpeta | Qué muestra |
 |---|---|---|
 | Dashboard | `dashboard/` | Capacidad operativa global, niveles por tipo sanguíneo, alertas de caducidad |
 | Detalle de unidad | `detalle_unidad/` | El ciclo de vida de una unidad concreta |
-| Bitácora | `bitacora/` | Línea de tiempo de eventos: alertas, fallas, ingresos, despachos |
+| Bitácora | `bitacora/` | **Pendiente:** el export de Stitch no se incluyó; no hay archivos en esta carpeta |
 
 `tokens/design-tokens.yml` trae la paleta de colores y la tipografía que generó
 Stitch (nombre del sistema: "Clinical Hematology Precision"), por si se quiere
@@ -18,7 +18,8 @@ reutilizar en una futura interfaz real con cowboy.
 
 ![Dashboard](dashboard/screen.png)
 ![Detalle de unidad](detalle_unidad/screen.png)
-![Bitácora](bitacora/screen.png)
+
+La captura de la bitácora falta junto con el resto de esa pantalla.
 
 ## Nota honesta: esto es un mockup, no la interfaz real
 
@@ -48,7 +49,14 @@ la tuviera.
 
 ## Pendiente
 
-La API con cowboy ya está implementada (`GET /api/inventario`,
-`POST /api/solicitudes`, SSE en `/api/alertas` y `/metrics`), pero estas
-pantallas siguen siendo estáticas (HTML con datos de ejemplo). El paso que
-falta es cablearlas a esos endpoints en lugar de los datos de muestra.
+1. **Falta la pantalla de bitácora.** Para completarla hay que abrir
+   `https://stitch.withgoogle.com`, generar la tercera pantalla con el prompt
+   de `PROMPT_STITCH.md` y exportar el zip a `design/bitacora/` (HTML y
+   `screen.png`). No se generó una versión local porque el enunciado pide
+   explícitamente que salga de Stitch; si se reconstruye a mano, debe
+   marcarse como reconstrucción y no como export de la herramienta.
+2. La API con cowboy ya está implementada (`GET /api/inventario`,
+   `POST /api/solicitudes`, SSE en `/api/alertas` y `/metrics`), pero las
+   pantallas existentes siguen siendo estáticas (HTML con datos de ejemplo).
+   El paso que falta es cablearlas a esos endpoints en lugar de los datos de
+   muestra.
