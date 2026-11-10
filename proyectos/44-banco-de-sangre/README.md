@@ -6,11 +6,13 @@ Un banco de sangre simulado donde **cada unidad de sangre es un proceso**. El si
 
 ## Equipo
 
+Proyecto individual.
+
 | Rol | Integrante |
 |---|---|
-| Backend (OTP) | _(completar)_ |
-| Frontend (Stitch + cowboy) | _(completar)_ |
-| Ops/QA | _(completar)_ |
+| Backend (OTP) | Apu |
+| Frontend (Stitch + cowboy) | Apu |
+| Ops/QA | Apu |
 
 ## Entorno y arranque
 
