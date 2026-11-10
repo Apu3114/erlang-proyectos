@@ -49,8 +49,4 @@ la tuviera.
 ## Pendiente
 
 1. **Pantalla de bitácora:** completada. El export de Stitch (`design/bitacora/index.html` y `screen.png`) se recibió vía GitHub y se descomprimió en `design/bitacora/`; es un export real de la herramienta, no una reconstrucción local.
-2. La API con cowboy ya está implementada (`GET /api/inventario`,
-   `POST /api/solicitudes`, SSE en `/api/alertas` y `/metrics`), pero las
-   pantallas existentes siguen siendo estáticas (HTML con datos de ejemplo).
-   El paso que falta es cablearlas a esos endpoints en lugar de los datos de
-   muestra.
+2. **Pantallas conectadas a la API:** completada. Cada pantalla (`dashboard/`, `detalle_unidad/`, `bitacora/`) incluye un panel "API en vivo" que consulta `GET /api/inventario`, `GET /metrics` y se suscribe al SSE de `GET /api/alertas`. Queda opcional cablear elementos concretos del mockup a datos de una unidad concreta (requiere un endpoint de unidad individual que hoy no existe en la API).

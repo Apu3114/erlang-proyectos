@@ -423,4 +423,30 @@
 </a>
 </nav>
 </div>
+<script>
+(function(){
+  var PANEL_ID='p44-api-vivo', base=location.origin, ultimos={};
+  var panel=document.createElement('div');
+  panel.id=PANEL_ID;
+  panel.style='position:fixed;top:10px;right:10px;z-index:9999;max-width:340px;background:#ffffff;border:1px solid #e1bfbb;border-radius:8px;padding:10px;font-family:sans-serif;font-size:12px;color:#0b1c30;box-shadow:0 4px 12px rgba(0,0,0,0.15);display:none;';
+  var tit=document.createElement('div'); tit.textContent='API en vivo'; tit.style='font-weight:700;margin-bottom:8px;font-size:13px;border-bottom:1px solid #e1bfbb;padding-bottom:4px;';
+  var cuerpo=document.createElement('div'); cuerpo.id=PANEL_ID+'-cuerpo'; cuerpo.innerHTML='<div style="color:#59413e;font-size:11px;">Conectando a la API...</div>';
+  panel.appendChild(tit); panel.appendChild(cuerpo); document.body.appendChild(panel);
+  function esc(t){return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');}
+  function mostrar(d){
+    var h=[];
+    if(d.existencias){h.push('<div style="font-weight:700;margin-top:6px;font-size:12px;">Existencias</div>'); Object.entries(d.existencias).forEach(function(e){h.push('<div style="font-size:11px;margin:2px 0;">'+esc(e[0])+': <b>'+e[1]+'</b></div>');});}
+    if(d.estados){h.push('<div style="font-weight:700;margin-top:8px;font-size:12px;">Unidades por estado</div>'); Object.entries(d.estados).forEach(function(e){h.push('<div style="font-size:11px;margin:2px 0;">'+esc(String(e[0]))+': <b>'+e[1]+'</b></div>');});}
+    if(d.proximas!==undefined){h.push('<div style="font-size:11px;margin:2px 0;">Próximas a caducar (48h): <b>'+d.proximas+'</b></div>');}
+    if(d.asignadas!==undefined){h.push('<div style="font-size:11px;margin:2px 0;">Asignadas (histórico): <b>'+d.asignadas+'</b></div>');}
+    cuerpo.innerHTML=h.join('')||'<div style="color:#59413e;font-size:11px;">Sin datos de la API</div>'; panel.style.display='block';
+  }
+  function cargar(){
+    try{fetch(base+'/api/inventario').then(function(r){return r.json();}).then(function(j){ultimos={existencias: j&&j.existencias?j.existencias:{}}; mostrar(ultimos);}).catch(function(){});}catch(e){}
+    try{fetch(base+'/metrics').then(function(r){return r.json();}).then(function(j){ultimos=Object.assign({},ultimos,{estados:j.unidades_por_estado,proximas:j.proximas_a_caducar_48h,asignadas:j.unidades_asignadas_historico}); mostrar(ultimos);}).catch(function(){});}catch(e){}
+  }
+  cargar(); setInterval(cargar,5000);
+  try{var es=new EventSource(base+'/api/alertas'); es.onmessage=function(ev){try{var a=JSON.parse(ev.data);}catch(e){return;}; var f=document.createElement('div'); f.style='font-size:10px;margin-top:4px;padding:4px;background:#ffdad6;border-radius:4px;border:1px solid #ffb4ac;color:#410002;'; f.textContent=(a.tipo||'alerta')+' '+(a.tipo_sangre||'')+' '+(a.componente||'')+' umbral:'+(a.umbral??''); cuerpo.insertBefore(f,cuerpo.firstChild); panel.style.display='block';}; es.onerror=function(){};}catch(e){}
+})();
+</script>
 </body></html>

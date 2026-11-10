@@ -233,7 +233,7 @@ natural de `p44_donantes`.
 
 **Pendiente / extensiones naturales:**
 - [x] Exportar de Stitch la pantalla de bitácora (`design/bitacora/`): export real de Stitch recibido y descomprimido.
-- [ ] Conectar las pantallas estáticas de Stitch a la API real.
+- [x] Conectar las pantallas estáticas de Stitch a la API real (`GET /api/inventario`, `GET /metrics`, SSE `GET /api/alertas`) mediante un panel "API en vivo" en cada pantalla (`dashboard/`, `detalle_unidad/`, `bitacora/`).
 - [ ] Replicar o respaldar el archivo DETS (el disco sigue siendo el punto único de falla).
 - [ ] Reglas de compatibilidad propias para plaquetas (hoy comparten la simplificación del plasma).
 - [ ] Modelar el intervalo entre donaciones y el límite anual por donante.
