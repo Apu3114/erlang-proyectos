@@ -25,5 +25,14 @@ iniciar_http() ->
   Puerto = application:get_env(p44_banco_de_sangre, http_port, 8080),
   case cowboy:start_clear(?LISTENER, [{port, Puerto}], #{env => #{dispatch => Dispatch}}) of
     {ok, _Pid} -> ok;
-    {error, {already_started, _Pid}} -> ok
+    {error, {already_started, _Pid}} -> ok;
+    {error, eaddrinuse} ->
+      logger:error("No se pudo abrir el puerto ~p: ya esta en uso. "
+                   "Revisa si hay otra instancia corriendo (otro rebar3 shell, "
+                   "otro release, u otra app) y detenla primero.", [Puerto]),
+      {error, {puerto_ocupado, Puerto}};
+    {error, Razon} ->
+      logger:error("No se pudo arrancar el servidor HTTP en el puerto ~p: ~p",
+                   [Puerto, Razon]),
+      {error, {http_no_arranco, Razon}}
   end.

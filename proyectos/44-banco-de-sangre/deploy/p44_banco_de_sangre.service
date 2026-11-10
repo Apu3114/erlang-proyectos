@@ -1,0 +1,40 @@
+# Servicio systemd para el release de produccion (relx) del banco de sangre.
+#
+# NO es para la VM de desarrollo (ahi se usa `rebar3 shell`). Es para la Raspberry
+# Pi real donde vive el sistema, arrancado como un release ya compilado con
+# `rebar3 as prod release` (ver deploy/DEPLOY.md para los pasos completos).
+#
+# Instalar:
+#   sudo cp p44_banco_de_sangre.service /etc/systemd/system/
+#   sudo systemctl daemon-reload
+#   sudo systemctl enable --now p44_banco_de_sangre
+
+[Unit]
+Description=Banco de sangre (p44) - simulacion Erlang/OTP
+After=network.target
+
+[Service]
+Type=exec
+User=pi
+Group=pi
+
+# Ajustar esta ruta al lugar real donde quede el release desplegado.
+WorkingDirectory=/opt/p44_banco_de_sangre
+ExecStart=/opt/p44_banco_de_sangre/bin/p44_banco_de_sangre foreground
+ExecStop=/opt/p44_banco_de_sangre/bin/p44_banco_de_sangre stop
+
+# 'foreground' (no 'daemon'): el propio script del release se queda al frente,
+# conectado a stdout/stderr, que es justo lo que systemd necesita para rastrear
+# el proceso y para journalctl. Con 'daemon' el script hace su propio fork y
+# systemd pierde de vista al proceso real.
+Restart=on-failure
+RestartSec=5
+
+# vm.args pide hasta 1048576 procesos y una cola enorme de puertos/descriptores;
+# sin esto, el limite por defecto de systemd (usualmente 1024) lo recorta en
+# silencio y esos ajustes de la VM no sirven de nada.
+LimitNOFILE=65536
+LimitNPROC=65536
+
+[Install]
+WantedBy=multi-user.target
