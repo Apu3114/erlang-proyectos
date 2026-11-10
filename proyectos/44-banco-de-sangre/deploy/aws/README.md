@@ -38,7 +38,8 @@ Para permitir acceso desde Internet, en EC2 → Instancias → Grupo de segurida
 → Reglas de entrada, añadir **HTTP TCP 80 desde 0.0.0.0/0** (y `::/0` si
 se usa IPv6). SSH 22 debe permanecer restringido a la IP del administrador.
 Visitar `http://IP_PUBLICA/`: abre la app responsive en `/app/` con pestañas
-Inventario, Procesos y Bitácora. Las API están en `/api/...` y `/metrics`.
+Inventario, Lotes, Procesos y Bitácora. En Lotes se puede explorar cada lote y
+sus unidades sin modificar el inventario. Las API están en `/api/...` y `/metrics`.
 
 **Importante:** es una simulación educativa sin autenticación ni TLS. La API
 las API de reservas, despacho, retiro y fallas quedan accesibles a cualquiera

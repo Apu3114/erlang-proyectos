@@ -20,6 +20,9 @@ Proyecto individual.
 release, nginx, reglas de seguridad y las URL públicas. El backend escucha solo
 en `127.0.0.1:8080`; nginx publica la app responsive de `design/app/` y la API
 por HTTP/80. Las pantallas originales de Stitch siguen como maquetas de diseño.
+La app incluye una sección **Lotes**: agrupa las unidades por lote, muestra
+cuántas siguen disponibles y permite abrir el detalle con estados, tipos y
+caducidades; desde ahí se puede abrir cada proceso.
 
 Se desarrolló y probó en una máquina virtual Raspberry Pi 5 (aarch64) de Corellium con Debian 11, con **Erlang/OTP 27.3.4.19** (compilado con kerl) y **rebar3 3.28.0**. Los paquetes de Debian 11 no traen OTP 27 ni rebar3, y el repositorio de seguridad de esa versión pasó a `archive.debian.org`.
 
