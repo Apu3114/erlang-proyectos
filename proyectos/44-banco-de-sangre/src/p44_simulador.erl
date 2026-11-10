@@ -20,8 +20,12 @@
 %% ---------- Preparación ----------
 
 %% Arranca la aplicación desde cero (útil en el shell para repetir la simulación).
+%% Borra también la bitácora persistente: si no, el repoblador reconstruye las
+%% unidades de la corrida anterior y `cargar/1` choca con ids ya registrados.
 reiniciar() ->
   _ = application:stop(?APP),
+  Ruta = application:get_env(?APP, dets_path, "priv/p44_bitacora.dets"),
+  _ = file:delete(Ruta),
   {ok, _} = application:ensure_all_started(?APP),
   ok.
 

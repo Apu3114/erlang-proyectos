@@ -48,7 +48,7 @@ la tuviera.
 
 ## Pendiente
 
-Estas pantallas son estáticas (HTML con datos de ejemplo). Conectarlas a datos
-reales requiere la API con cowboy (`GET /api/inventario`,
-`POST /api/solicitudes`, SSE de alertas) descrita en la sección 6.4 del
-prompt de contexto del proyecto — todavía no implementada.
+La API con cowboy ya está implementada (`GET /api/inventario`,
+`POST /api/solicitudes`, SSE en `/api/alertas` y `/metrics`), pero estas
+pantallas siguen siendo estáticas (HTML con datos de ejemplo). El paso que
+falta es cablearlas a esos endpoints en lugar de los datos de muestra.

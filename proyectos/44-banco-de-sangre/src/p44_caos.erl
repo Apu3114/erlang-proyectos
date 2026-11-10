@@ -3,8 +3,8 @@
 %% Al final se revisan las invariantes de TODOS los historiales.
 %%
 %% Desde `rebar3 shell`:  p44_simulador:reiniciar(), p44_caos:correr().
-%% Con incluir_bitacora => true (por defecto) el último experimento destruye el
-%% inventario a propósito; después hay que volver a llamar a p44_simulador:reiniciar().
+%% Con incluir_bitacora => true (por defecto) el último experimento mata la
+%% bitácora para comprobar que se recupera desde DETS con toda su trazabilidad.
 -module(p44_caos).
 
 -export([correr/0, correr/1, imprimir/1]).
@@ -195,19 +195,25 @@ matar_supervisor_de_unidades() ->
               io_lib:format("estados antes: ~p; recuperados iguales: ~p", [Antes, Resultado =:= ok]),
               Resultado =:= ok).
 
-%% 6. La bitácora muere. HIPOTESIS DE DISEÑO: es el unico punto de falla; si cae, se
-%% pierde la trazabilidad y no hay de donde repoblar. Este experimento lo comprueba.
+%% 6. La bitácora muere, pero ahora está persistida en DETS. Debe reiniciarse,
+%% recargar el archivo y dejar que el repoblador recree las unidades. La
+%% trazabilidad ya no se pierde con el proceso; el punto único de falla que
+%% queda es el archivo en disco (ver limitaciones en el README).
 matar_bitacora() ->
   Antes = length([x || {_, Pid, _, _} <- supervisor:which_children(p44_unidades_sup), is_pid(Pid)]),
+  HistorialAntes = length(p44_bitacora:historial(1)),
   exit(whereis(p44_bitacora), kill),
   timer:sleep(1000),
   Despues = try length([x || {_, Pid, _, _} <- supervisor:which_children(p44_unidades_sup), is_pid(Pid)])
             catch exit:_ -> sin_supervisor
             end,
-  experimento("la bitacora (EXPERIMENTO DESTRUCTIVO)",
-              "HALLAZGO ESPERADO: es el punto unico de falla; al caer se pierde el inventario y la trazabilidad",
-              io_lib:format("unidades vivas antes: ~p, despues: ~p", [Antes, Despues]),
-              Despues =:= 0).
+  HistorialDespues = try length(p44_bitacora:historial(1)) catch _:_ -> 0 end,
+  TrazaRecuperada = HistorialDespues > 0 andalso HistorialDespues >= HistorialAntes,
+  experimento("la bitacora persistida (EXPERIMENTO DESTRUCTIVO)",
+              "se reinicia, recarga el DETS y el repoblador recrea las unidades: la trazabilidad sobrevive",
+              io_lib:format("unidades vivas antes: ~p, despues: ~p; eventos del historial antes: ~p, despues: ~p",
+                            [Antes, Despues, HistorialAntes, HistorialDespues]),
+              Despues =:= Antes andalso TrazaRecuperada).
 
 %% ---------- Auxiliares ----------
 
