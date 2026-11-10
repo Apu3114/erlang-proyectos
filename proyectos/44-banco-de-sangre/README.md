@@ -28,7 +28,8 @@ inferidas de la bitácora y permite registrar donantes ficticios con alias,
 tipo, edad y peso opcionales. Los datos no registrados no se inventan. Un
 donante retirado por prueba positiva queda bloqueado para crear nuevas unidades.
 
-**Entrega:** [documentación para Gist](docs/ENTREGA_GIST.md) y
+**Entrega:** [manual público en Gist](https://gist.github.com/Apu3114/899f079a374af6fe8f5e473c40a66420),
+[copia en el repositorio](docs/ENTREGA_GIST.md) y
 [guion de grabación en Loom](docs/GUION_LOOM.md). El logo SVG original de la
 app está en `design/app/logo.svg`. El video y la captura de la app real deben
 ser grabados por el autor; el enunciado de `problema/readme.md` no especifica

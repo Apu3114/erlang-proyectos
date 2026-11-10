@@ -1,6 +1,6 @@
 # Guion de Loom — Banco de sangre (aprox. 5–7 minutos)
 
-Antes: abre la [app](http://54.227.229.168/) y el [README](../README.md); comprueba que el laboratorio AWS está activo. Prepara una ventana sin credenciales, IP privada, archivos DETS ni datos personales. **No ejecutes** `p44_simulador:reiniciar/0` ni una falla irreversible en la demo pública. Graba capturas de la app real para la entrega. Si la IP cambia, usa la nueva y actualiza tus enlaces.
+Antes: abre la [app](http://54.227.229.168/), el [README](../README.md) y el [Gist del manual](https://gist.github.com/Apu3114/899f079a374af6fe8f5e473c40a66420); comprueba que el laboratorio AWS está activo. Prepara una ventana sin credenciales, IP privada, archivos DETS ni datos personales. **No ejecutes** `p44_simulador:reiniciar/0` ni una falla irreversible en la demo pública. Graba capturas de la app real para la entrega. Si la IP cambia, usa la nueva y actualiza tus enlaces.
 
 1. **0:00–0:40 · Contexto.** «Este es un banco de sangre educativo con datos ficticios. Controla 300 unidades, tipos y componentes, caducidad y trazabilidad. No es un sistema clínico.» Muestra el logo en la esquina, el estado en línea y el panel de inventario. Explica qué problema resuelve.
 2. **0:40–1:40 · OTP.** Abre el diagrama del README. «Cada unidad es un `gen_statem`; `rest_for_one` ordena las dependencias. Los supervisores dinámicos y el repoblador reconstruyen procesos; ETS y DETS conservan la bitácora». Explica quién reinicia a quién, sin revelar rutas con secretos.
