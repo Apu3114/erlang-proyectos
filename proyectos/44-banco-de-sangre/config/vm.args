@@ -1,9 +1,4 @@
 -name p44_banco_de_sangre@127.0.0.1
-%% Cookie generado una sola vez para este proyecto (no es un secreto de verdad:
-%% el nodo no se expone a la red, solo se usa para `remote_console`/`attach`
-%% locales desde la misma maquina via el script del release). Si este nodo
-%% alguna vez escucha conexiones de distribucion Erlang desde fuera de
-%% localhost, hay que generar un cookie propio y no commitearlo al repo.
 -setcookie 954e9869148d754429c3db8546ac280c
 +S 4:4
 +SDcpu 4:4

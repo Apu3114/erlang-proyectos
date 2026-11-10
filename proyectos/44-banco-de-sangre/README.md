@@ -16,11 +16,16 @@ Proyecto individual.
 
 ## Entorno y arranque
 
+**Demo en AWS Academy:** ver [deploy/aws/README.md](deploy/aws/README.md) para el
+release, nginx, reglas de seguridad y las URL públicas. El backend escucha solo
+en `127.0.0.1:8080`; nginx publica la app responsive de `design/app/` y la API
+por HTTP/80. Las pantallas originales de Stitch siguen como maquetas de diseño.
+
 Se desarrolló y probó en una máquina virtual Raspberry Pi 5 (aarch64) de Corellium con Debian 11, con **Erlang/OTP 27.3.4.19** (compilado con kerl) y **rebar3 3.28.0**. Los paquetes de Debian 11 no traen OTP 27 ni rebar3, y el repositorio de seguridad de esa versión pasó a `archive.debian.org`.
 
 ```bash
 rebar3 compile
-rebar3 eunit          # 71 pruebas
+rebar3 eunit          # 74 pruebas
 rebar3 shell
 ```
 
@@ -118,6 +123,11 @@ La aplicación arranca un servidor cowboy en el puerto `8080` (configurable en
 | `/api/solicitudes` | `POST` | Reserva una unidad (`p44_inventario:solicitar/4`). Cuerpo: `{"receptor":"o_neg","componente":"globulos_rojos","solicitante":"cirugia_1","ttl_ms":3600000}` |
 | `/api/alertas` | `GET` | Stream SSE con las alertas que recibe un suscriptor de `p44_alertas:suscribir/0` |
 | `/metrics` | `GET` | Unidades por estado, próximas a caducar en 48 h e histórico de asignadas |
+| `/api/unidades` y `/api/unidades/:id` | `GET` | Procesos de unidad y detalle actual |
+| `/api/unidades/:id/acciones` | `POST` | Despachar una reserva propia, liberarla o retirar la unidad |
+| `/api/bitacora?unidad=ID` | `GET` | Últimos 100 eventos reales (opcionalmente filtrados) |
+| `/api/refrigeradores/:id/falla` | `POST` | Simular falla de un lote |
+| `/api/donantes/:id/retirar` | `POST` | Retirar unidades de donante con prueba positiva tardía |
 
 Ejemplo:
 
@@ -136,11 +146,15 @@ sobre datos externos) y responden `400`, `404` o `503` con JSON propio
 ## Pantallas (Google Stitch)
 
 El diseño de interfaz está en `design/` y se describe en `design/DESIGN.md`.
-Las pantallas de dashboard y detalle de unidad se exportaron de **Google
-Stitch** a partir de `design/PROMPT_STITCH.md`; son mockups estáticos en HTML +
-Tailwind, todavía sin conectar a la API. **Falta el export de la pantalla de
-bitácora** (`design/bitacora/`): está referenciada en `DESIGN.md` pero no se
-incluyó en el export, así que no se presenta como si existiera.
+Las pantallas de dashboard, detalle de unidad y bitácora se exportaron de
+**Google Stitch** a partir de `design/PROMPT_STITCH.md`. Son maquetas HTML +
+Tailwind: el panel «API en vivo» muestra inventario, métricas y alertas reales,
+pero los textos, cifras y botones del resto de cada maqueta son ilustrativos.
+Los enlaces del panel permiten pasar entre las tres pantallas. La app funcional
+en `design/app/` utiliza la misma API: inventario y métricas en vivo, filtros de
+procesos, reservas, despacho, liberación, retiro, falla de refrigerador y bitácora.
+Las maquetas de Stitch conservan textos y cifras ilustrativos; no se presentan
+como datos clínicos reales.
 
 ## Persistencia y despliegue
 
@@ -229,7 +243,7 @@ natural de `p44_donantes`.
 - [x] API HTTP con cowboy: inventario, solicitudes, alertas SSE y `/metrics`.
 - [x] Pantallas de Stitch en `design/` y `design/DESIGN.md` (dashboard, detalle de unidad y bitácora; las tres exportadas de Stitch).
 - [x] Release relx (`rebar3 as prod release`) y servicio systemd en `deploy/`.
-- [x] **71 pruebas** con `rebar3 eunit` en verde.
+- [x] **74 pruebas** con `rebar3 eunit` en verde.
 
 **Pendiente / extensiones naturales:**
 - [x] Exportar de Stitch la pantalla de bitácora (`design/bitacora/`): export real de Stitch recibido y descomprimido.

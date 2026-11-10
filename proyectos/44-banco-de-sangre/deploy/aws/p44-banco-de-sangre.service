@@ -1,0 +1,17 @@
+[Unit]
+Description=Banco de sangre educativo (Erlang/OTP)
+After=network.target
+
+[Service]
+Type=exec
+User=ubuntu
+Group=ubuntu
+WorkingDirectory=/home/ubuntu/erlang-proyectos/proyectos/44-banco-de-sangre
+ExecStart=/home/ubuntu/erlang-proyectos/proyectos/44-banco-de-sangre/_build/prod/rel/p44_banco_de_sangre/bin/p44_banco_de_sangre foreground
+ExecStop=/home/ubuntu/erlang-proyectos/proyectos/44-banco-de-sangre/_build/prod/rel/p44_banco_de_sangre/bin/p44_banco_de_sangre stop
+Restart=on-failure
+RestartSec=5
+LimitNOFILE=65536
+
+[Install]
+WantedBy=multi-user.target

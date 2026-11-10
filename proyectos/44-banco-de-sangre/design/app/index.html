@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Banco de sangre · Simulación OTP</title>
+  <style>
+    :root{font-family:system-ui,-apple-system,"Segoe UI",sans-serif;color:#203042;background:#f5f7fa;font-synthesis:none}
+    *{box-sizing:border-box}body{margin:0}button,input,select{font:inherit}button{cursor:pointer}a{color:#9f2634}
+    header{background:#801b2d;color:#fff;padding:18px max(20px,calc((100% - 1180px)/2));display:flex;justify-content:space-between;align-items:center;gap:14px;flex-wrap:wrap}
+    header h1{font-size:1.45rem;margin:0}header p{margin:3px 0 0;color:#f8dce1;font-size:.85rem}
+    .status{border-radius:30px;background:#5b1422;padding:8px 14px;font-size:.85rem}main{max-width:1180px;margin:auto;padding:20px}
+    nav{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 20px}nav button{border:1px solid #e4d4d7;background:white;border-radius:8px;padding:11px 16px;color:#6d2534;font-weight:700}
+    nav button[aria-current="page"]{background:#801b2d;border-color:#801b2d;color:white}
+    .notice{padding:12px 16px;border-radius:8px;margin-bottom:16px;background:#e7f5ee;color:#14523e;display:none}.notice.error{background:#fff0f0;color:#951e24}
+    .panel{background:#fff;border:1px solid #e5e9ee;border-radius:12px;padding:20px;margin:0 0 18px;box-shadow:0 3px 16px #20304209}
+    h2{margin:0 0 14px;font-size:1.25rem}h3{margin:0 0 10px;font-size:1rem}.muted{color:#617182;font-size:.9rem;line-height:1.5}
+    .stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-bottom:18px}.stat{background:white;border:1px solid #e5e9ee;border-radius:12px;padding:18px}
+    .stat strong{display:block;font-size:1.75rem;color:#801b2d}.stat span{color:#617182;font-size:.85rem}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:12px}.stock{border:1px solid #e8edf1;border-radius:10px;padding:14px}.stock strong{font-size:1.15rem;color:#801b2d}
+    .stock small{display:block;color:#617182}.stock .count{font-size:1.45rem;font-weight:750;float:right}.critical{background:#fff3ef;border-color:#f6b5a2}
+    form{display:flex;flex-wrap:wrap;align-items:end;gap:12px}label{display:grid;gap:5px;font-weight:650;font-size:.85rem;min-width:135px;flex:1}
+    input,select{padding:10px;border:1px solid #cbd4de;border-radius:7px;background:white;color:#203042;min-width:0;width:100%}
+    button.primary{background:#801b2d;color:white;border:0;border-radius:7px;padding:11px 17px;font-weight:700}button.secondary{background:white;border:1px solid #b7c3cf;border-radius:7px;padding:8px 11px;color:#203042}
+    button.danger{border-color:#be4a4a;color:#a12428}button:disabled{opacity:.55;cursor:wait}
+    .tools{display:flex;gap:10px;flex-wrap:wrap;margin-bottom:14px}.tools>*{flex:1;min-width:145px}
+    .list{display:grid;gap:10px}.row{display:flex;justify-content:space-between;gap:12px;align-items:center;border:1px solid #e5e9ee;border-radius:9px;padding:12px;flex-wrap:wrap}
+    .row .info{flex:2;min-width:190px}.row .info strong{color:#801b2d}.row .actions{display:flex;gap:6px;flex-wrap:wrap;justify-content:flex-end}
+    .badge{display:inline-block;border-radius:6px;background:#e9f4ec;color:#206046;padding:3px 7px;font-size:.77rem;font-weight:700}
+    .badge.reservada{background:#fff2da;color:#87540b}.badge.asignada{background:#e5edf8;color:#345275}.badge.retirada,.badge.comprometida,.badge.caducada{background:#ffe6e6;color:#962f32}
+    .history{border-left:3px solid #e4ced3;padding:0 0 17px 15px;margin:0 0 0 5px}.history time{font-size:.8rem;color:#617182}
+    #view-inventario,#view-procesos,#view-bitacora{display:none}footer{max-width:1180px;margin:0 auto 30px;padding:0 20px;color:#617182;font-size:.85rem}
+    @media(max-width:680px){header{padding:16px}main{padding:14px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.panel{padding:15px}.stat{padding:12px}.stat strong{font-size:1.4rem}.row .actions{justify-content:flex-start}nav{display:grid;grid-template-columns:repeat(3,1fr)}nav button{padding:10px 4px;font-size:.84rem}}
+  </style>
+</head>
+<body>
+  <header><div><h1>Banco de sangre</h1><p>Simulación educativa · Erlang/OTP · datos ficticios</p></div><span class="status" id="status">Conectando...</span></header>
+  <main>
+    <nav aria-label="Secciones"><button data-view="inventario">Inventario</button><button data-view="procesos">Procesos</button><button data-view="bitacora">Bitácora</button></nav>
+    <div id="notice" class="notice" role="status" aria-live="polite"></div>
+    <section id="view-inventario">
+      <div class="stats" id="stats"></div>
+      <div class="panel"><h2>Reservar una unidad</h2><p class="muted">El sistema elige una unidad compatible y la que vence primero (FEFO). Para despacharla, ve a Procesos.</p>
+        <form id="reserve-form"><label>Tipo del receptor<select name="receptor" required><option value="o_neg">O−</option><option value="o_pos">O+</option><option value="a_neg">A−</option><option value="a_pos">A+</option><option value="b_neg">B−</option><option value="b_pos">B+</option><option value="ab_neg">AB−</option><option value="ab_pos">AB+</option></select></label>
+        <label>Componente<select name="componente"><option value="globulos_rojos">Glóbulos rojos</option><option value="plasma">Plasma</option><option value="plaquetas">Plaquetas</option></select></label>
+        <label>Solicitante<input name="solicitante" placeholder="Ej. Cirugía 1" maxlength="100" required></label>
+        <label>Reserva (minutos)<input name="minutos" type="number" min="1" max="1440" value="60" required></label><button class="primary" type="submit">Reservar</button></form>
+      </div>
+      <div class="panel"><h2>Existencias disponibles</h2><div id="stock" class="grid"></div></div>
+      <div class="panel"><h2>Simular falla de refrigerador</h2><p class="muted">Acción irreversible en esta demostración: compromete todas las unidades de ese lote. Comprueba antes el lote en Procesos.</p>
+        <form id="fridge-form"><label>Lote / refrigerador<select name="id"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option><option value="5">5</option><option value="6">6</option></select></label><button class="secondary danger" type="submit">Simular falla</button></form></div>
+      <div class="panel"><h2>Retiro por prueba positiva tardía</h2><p class="muted">Retira las unidades de un donante y reporta las que ya se despacharon para seguimiento. Busca el ID del donante en Procesos.</p>
+        <form id="donor-form"><label>ID del donante<input name="id" type="number" min="1" required></label><label>Motivo<input name="motivo" placeholder="Ej. prueba positiva tardía" maxlength="200" required></label><button class="secondary danger" type="submit">Retirar por donante</button></form></div>
+    </section>
+    <section id="view-procesos"><div class="panel"><h2>Procesos de unidades</h2><p class="muted">Cada fila es un proceso gen_statem. Puedes despachar tu reserva, liberarla o retirar una unidad no entregada.</p>
+      <div class="tools"><input id="search" aria-label="Buscar unidad o donante" placeholder="Buscar ID o donante"><select id="state-filter" aria-label="Filtrar estado"><option value="">Todos los estados</option><option value="disponible">Disponibles</option><option value="reservada">Reservadas</option><option value="asignada">Despachadas</option><option value="retirada">Retiradas</option><option value="comprometida">Comprometidas</option><option value="caducada">Caducadas</option></select><select id="component-filter" aria-label="Filtrar componente"><option value="">Todos los componentes</option><option value="globulos_rojos">Glóbulos rojos</option><option value="plasma">Plasma</option><option value="plaquetas">Plaquetas</option></select></div>
+      <p id="process-count" class="muted"></p><div id="unit-list" class="list"></div></div></section>
+    <section id="view-bitacora"><div class="panel"><h2>Bitácora de trazabilidad</h2><p class="muted">Últimos 100 eventos reales. Puedes filtrar por ID de unidad; las asignaciones indican el receptor.</p>
+      <form id="history-form"><label>ID de unidad (opcional)<input id="history-id" type="number" min="1" placeholder="Todas las unidades"></label><button class="secondary" type="submit">Buscar</button></form><div id="events" style="margin-top:22px"></div></div></section>
+  </main>
+  <footer>Solo para uso académico. No es un sistema clínico ni contiene datos de pacientes reales. El laboratorio AWS debe permanecer encendido.</footer>
+  <script>
+  (()=>{
+    const $=id=>document.getElementById(id), tipo={o_neg:'O−',o_pos:'O+',a_neg:'A−',a_pos:'A+',b_neg:'B−',b_pos:'B+',ab_neg:'AB−',ab_pos:'AB+'};
+    const componente={globulos_rojos:'Glóbulos rojos',plasma:'Plasma',plaquetas:'Plaquetas'};
+    const nombre=v=>tipo[v]||componente[v]||v||'—';
+    const escape=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+    let unidades=[],metricas={},eventos=[],vista='inventario',avisoTimer;
+    async function api(path, options={}){
+      const r=await fetch(path,{cache:'no-store',...options});
+      const body=await r.json();
+      if(!r.ok) throw Error(body.error||`Error HTTP ${r.status}`);
+      return body;
+    }
+    const post=(path,data)=>api(path,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(data)});
+    function aviso(texto,error=false){const el=$('notice');el.textContent=texto;el.className='notice'+(error?' error':'');el.style.display='block';clearTimeout(avisoTimer);avisoTimer=setTimeout(()=>el.style.display='none',9000)}
+    function navegar(v){vista=['inventario','procesos','bitacora'].includes(v)?v:'inventario';
+      for(const pagina of ['inventario','procesos','bitacora'])$('view-'+pagina).style.display=pagina===vista?'block':'none';
+      document.querySelectorAll('nav button').forEach(b=>b.setAttribute('aria-current',b.dataset.view===vista?'page':'false'));
+      if(vista==='bitacora')cargarBitacora();else if(vista==='procesos')cargarDatos();
+    }
+    document.querySelectorAll('nav button').forEach(b=>b.addEventListener('click',()=>{location.hash=b.dataset.view}));
+    window.addEventListener('hashchange',()=>navegar(location.hash.slice(1)));
+    function pintarInventario(){
+      const estados=metricas.unidades_por_estado||{};
+      $('stats').innerHTML=[['Disponibles',estados.disponible||0],['Reservadas',estados.reservada||0],['Despachadas',estados.asignada||0],['Próximas a caducar (48 h)',metricas.proximas_a_caducar_48h||0]].map(([t,n])=>`<div class="stat"><strong>${n}</strong><span>${t}</span></div>`).join('');
+      const stock=Object.entries(metricas.existencias||{}).sort(([a],[b])=>a.localeCompare(b));
+      $('stock').innerHTML=stock.map(([k,n])=>{const [t,c]=k.split(':');return `<div class="stock ${n<=5?'critical':''}"><span class="count">${n}</span><strong>${escape(nombre(t))}</strong><small>${escape(nombre(c))}</small></div>`}).join('')||'<p>Sin datos de inventario.</p>';
+    }
+    function pintarUnidades(){
+      const q=$('search').value.trim(),estado=$('state-filter').value,comp=$('component-filter').value;
+      const filtradas=unidades.filter(u=>(!estado||u.estado===estado)&&(!comp||u.componente===comp)&&(!q||String(u.id).includes(q)||String(u.donante).includes(q))).slice(0,100);
+      $('process-count').textContent=`${filtradas.length} mostradas de ${unidades.length} unidades (máximo 100 por vista)`;
+      $('unit-list').innerHTML=filtradas.map(u=>`<article class="row"><div class="info"><strong>#${u.id} · ${escape(nombre(u.tipo))}</strong> · ${escape(nombre(u.componente))}<br><span class="muted">Donante ${u.donante} · Lote ${u.lote} · Caduca ${new Date(u.caduca_en).toLocaleDateString('es-MX')}</span><br><span class="badge ${escape(u.estado)}">${escape(u.estado)}</span>${u.solicitante?` <span class="muted">Solicitante: ${escape(u.solicitante)}</span>`:''}${u.receptor?` <span class="muted">Receptor: ${escape(u.receptor)}</span>`:''}</div><div class="actions">${u.estado==='reservada'?`<button class="secondary" data-action="despachar" data-id="${u.id}">Despachar</button><button class="secondary" data-action="liberar" data-id="${u.id}">Liberar</button>`:''}${['disponible','reservada'].includes(u.estado)?`<button class="secondary danger" data-action="retirar" data-id="${u.id}">Retirar</button>`:''}<button class="secondary" data-action="historial" data-id="${u.id}">Historial</button></div></article>`).join('')||'<p class="muted">No hay unidades con esos filtros.</p>';
+    }
+    function pintarEventos(){
+      $('events').innerHTML=eventos.map(e=>`<article class="history"><time>${new Date(e.fecha_ms).toLocaleString('es-MX')}</time><div><strong>Unidad #${e.unidad} · ${escape(e.estado||e.evento)}</strong></div><div class="muted">${escape(e.descripcion)}</div></article>`).join('')||'<p class="muted">No hay eventos para esa búsqueda.</p>';
+    }
+    async function cargarDatos(){try{[metricas,{unidades}]=await Promise.all([api('/metrics'),api('/api/unidades')]);$('status').textContent='● Sistema en línea';pintarInventario();pintarUnidades()}catch(e){$('status').textContent='● Sin conexión';aviso('No se pudo consultar el sistema: '+e.message,true)}}
+    async function cargarBitacora(){try{const id=$('history-id').value;({eventos}=await api('/api/bitacora'+(id?'?unidad='+encodeURIComponent(id):'')));pintarEventos()}catch(e){aviso('No se pudo leer la bitácora: '+e.message,true)}}
+    $('reserve-form').addEventListener('submit',async e=>{e.preventDefault();const f=e.currentTarget,b=f.querySelector('button');b.disabled=true;
+      try{const d=Object.fromEntries(new FormData(f)),r=await post('/api/solicitudes',{receptor:d.receptor,componente:d.componente,solicitante:d.solicitante.trim(),ttl_ms:Number(d.minutos)*60000});
+        aviso(`Unidad #${r.id} reservada (${nombre(r.tipo)}${r.exacto?' · tipo exacto':' · compatible'}). Ve a Procesos para despacharla.`);await cargarDatos();location.hash='procesos';$('search').value=String(r.id);pintarUnidades()
+      }catch(err){aviso('No se pudo reservar: '+err.message,true)}finally{b.disabled=false}});
+    $('unit-list').addEventListener('click',async e=>{const b=e.target.closest('button[data-action]');if(!b)return;const id=Number(b.dataset.id),accion=b.dataset.action,u=unidades.find(x=>x.id===id);
+      if(accion==='historial'){$('history-id').value=id;location.hash='bitacora';cargarBitacora();return}
+      let data={accion};
+      if(accion==='despachar'){const receptor=prompt(`Despachar unidad #${id}. Escribe el identificador del receptor (datos ficticios):`);if(!receptor)return;data={accion,solicitante:u.solicitante,receptor:receptor.trim()};if(!data.receptor)return aviso('El receptor es obligatorio.',true)}
+      if(accion==='retirar'){const motivo=prompt(`Motivo de retirar la unidad #${id}:`);if(!motivo)return;data.motivo=motivo.trim();if(!data.motivo)return aviso('El motivo es obligatorio.',true)}
+      if(accion==='liberar'&&!confirm(`¿Liberar la reserva de la unidad #${id}?`))return;
+      b.disabled=true;try{await post(`/api/unidades/${id}/acciones`,data);aviso(`Unidad #${id}: ${accion} realizado.`);await cargarDatos();if(vista==='bitacora')await cargarBitacora()}catch(err){aviso('No se pudo completar la acción: '+err.message,true)}finally{b.disabled=false}
+    });
+    $('fridge-form').addEventListener('submit',async e=>{e.preventDefault();const id=new FormData(e.currentTarget).get('id');if(!confirm(`¿Confirmas la falla del refrigerador ${id}? No se puede deshacer.`))return;
+      try{const r=await post(`/api/refrigeradores/${id}/falla`,{});aviso(`Refrigerador ${id} fallado; ${r.comprometidas} unidades afectadas.`);await cargarDatos()}catch(err){aviso('No se pudo simular la falla: '+err.message,true)}
+    });
+    $('donor-form').addEventListener('submit',async e=>{e.preventDefault();const d=Object.fromEntries(new FormData(e.currentTarget));if(!confirm(`¿Retirar las unidades del donante ${d.id}?`))return;
+      try{const r=await post(`/api/donantes/${encodeURIComponent(d.id)}/retirar`,{motivo:d.motivo.trim()});const seguimiento=r.ya_entregadas.map(x=>`#${x.unidad} → ${x.receptor}`).join(', ');aviso(`Donante ${d.id}: ${r.retiradas} unidades retiradas. Ya despachadas para seguimiento: ${seguimiento||'ninguna'}.`);await cargarDatos()}catch(err){aviso('No se pudo retirar: '+err.message,true)}
+    });
+    $('history-form').addEventListener('submit',e=>{e.preventDefault();cargarBitacora()});
+    for(const id of ['search','state-filter','component-filter'])$(id).addEventListener('input',pintarUnidades);
+    const es=new EventSource('/api/alertas');es.onmessage=e=>{try{const d=JSON.parse(e.data);aviso(`Alerta: ${d.tipo} · ${nombre(d.tipo_sangre)} · ${nombre(d.componente)}`);cargarDatos()}catch(_){}};
+    es.onerror=()=>{};
+    navegar(location.hash.slice(1));cargarDatos();setInterval(()=>{cargarDatos();if(vista==='bitacora')cargarBitacora()},15000);
+  })();
+  </script>
+</body>
+</html>

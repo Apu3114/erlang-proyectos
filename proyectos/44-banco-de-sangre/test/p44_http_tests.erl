@@ -15,8 +15,11 @@ http_test_() ->
        {"POST /api/solicitudes responde 404 sin existencias", fun solicitud_sin_existencias/0},
        {"POST /api/solicitudes responde 400 con un tipo invalido", fun solicitud_tipo_invalido/0},
        {"POST /api/solicitudes responde 400 con JSON invalido", fun solicitud_json_invalido/0},
-       {"GET /metrics responde 200 con conteos coherentes", fun metricas/0},
-       {"GET /api/alertas transmite un evento por SSE", {timeout, 20, fun alertas_sse/0}}]
+        {"GET /metrics responde 200 con conteos coherentes", fun metricas/0},
+        {"GET /api/alertas transmite un evento por SSE", {timeout, 20, fun alertas_sse/0}},
+        {"Listado, despacho, liberacion, retiro y bitacora HTTP", fun flujo_interfaz/0},
+        {"Falla de refrigerador HTTP compromete el lote", fun falla_http/0},
+        {"Retiro por donante HTTP afecta a todas sus unidades", fun retiro_donante_http/0}]
     end}}.
 
 arrancar() ->
@@ -32,9 +35,15 @@ arrancar() ->
   Dispatch = cowboy_router:compile([
     {'_', [
       {"/api/inventario", p44_http_inventario_handler, []},
-      {"/api/solicitudes", p44_http_solicitudes_handler, []},
-      {"/api/alertas", p44_http_alertas_handler, []},
-      {"/metrics", p44_http_metricas_handler, []}
+       {"/api/solicitudes", p44_http_solicitudes_handler, []},
+       {"/api/alertas", p44_http_alertas_handler, []},
+       {"/api/unidades", p44_http_unidades_handler, []},
+       {"/api/unidades/:id", p44_http_unidades_handler, []},
+       {"/api/unidades/:id/acciones", p44_http_acciones_handler, []},
+       {"/api/bitacora", p44_http_bitacora_handler, []},
+       {"/api/refrigeradores/:id/falla", p44_http_refrigeradores_handler, []},
+       {"/api/donantes/:id/retirar", p44_http_donantes_handler, []},
+       {"/metrics", p44_http_metricas_handler, []}
     ]}
   ]),
   {ok, _} = cowboy:start_clear(p44_http_listener, [{port, ?PUERTO}], #{env => #{dispatch => Dispatch}}),
@@ -160,6 +169,49 @@ alertas_sse() ->
   ok = inets:stop(httpc, p44_sse_test),
   application:unset_env(p44_banco_de_sangre, umbrales),
   ?assertMatch({ok, #{<<"tipo">> := <<"alerta_critica">>}}, Resultado).
+
+flujo_interfaz() ->
+  nueva(201, a_pos, globulos_rojos),
+  esperar_existencias({a_pos, globulos_rojos}, 1),
+  {200, {ok, #{<<"unidades">> := Lista}}} = http_get("/api/unidades"),
+  ?assert(lists:any(fun(#{<<"id">> := Id}) -> Id =:= 201 end, Lista)),
+  {200, {ok, #{<<"id">> := 201}}} = http_get("/api/unidades/201"),
+  {400, _} = http_get("/api/unidades/no-es-id"),
+  {200, {ok, #{<<"id">> := 201}}} = post("/api/solicitudes",
+                                            #{receptor => a_pos, componente => globulos_rojos,
+                                              solicitante => <<"cirugia_test">>}),
+  {409, _} = post("/api/unidades/201/acciones",
+                  #{accion => despachar, solicitante => <<"otro">>, receptor => <<"paciente_demo">>}),
+  {200, {ok, #{<<"estado">> := <<"reservada">>}}} = http_get("/api/unidades/201"),
+  {200, _} = post("/api/unidades/201/acciones", #{accion => despachar,
+                      solicitante => <<"cirugia_test">>, receptor => <<"paciente_demo">>}),
+  {409, _} = post("/api/unidades/201/acciones", #{accion => liberar}),
+  {200, {ok, #{<<"estado">> := <<"asignada">>}}} = http_get("/api/unidades/201"),
+  {200, {ok, #{<<"eventos">> := Eventos}}} = http_get("/api/bitacora?unidad=201"),
+  ?assert(lists:any(fun(#{<<"estado">> := E}) -> E =:= <<"asignada">> end, Eventos)),
+  nueva(202, ab_pos, plaquetas),
+  esperar_existencias({ab_pos, plaquetas}, 1),
+  {200, {ok, #{<<"id">> := 202}}} = post("/api/solicitudes",
+                                             #{receptor => ab_pos, componente => plaquetas}),
+  {200, _} = post("/api/unidades/202/acciones", #{accion => liberar}),
+  {200, _} = post("/api/unidades/202/acciones", #{accion => retirar, motivo => <<"prueba tardia">>}),
+  {200, {ok, #{<<"estado">> := <<"retirada">>}}} = http_get("/api/unidades/202").
+
+falla_http() ->
+  {ok, _} = p44_refrigeradores_sup:crear(99, 99),
+  {ok, _} = p44_unidades_sup:crear(#{id => 203, tipo => o_pos, componente => plasma,
+                                    lote => 99, donante => 1203, caduca_en => ahora() + ?HORA}),
+  esperar_existencias({o_pos, plasma}, 1),
+  {200, {ok, #{<<"comprometidas">> := N}}} = post("/api/refrigeradores/99/falla", #{}),
+  ?assert(N >= 1),
+  {200, {ok, #{<<"estado">> := <<"comprometida">>}}} = http_get("/api/unidades/203").
+
+retiro_donante_http() ->
+  {ok, _} = p44_unidades_sup:crear(#{id => 204, tipo => o_neg, componente => plasma,
+                                    lote => 1, donante => 4444, caduca_en => ahora() + ?HORA}),
+  {200, {ok, #{<<"retiradas">> := 1}}} = post("/api/donantes/4444/retirar",
+                                              #{motivo => <<"prueba positiva tardia">>}),
+  {200, {ok, #{<<"estado">> := <<"retirada">>}}} = http_get("/api/unidades/204").
 
 esperar_evento_sse(_HandlerPid, 0) -> error(sin_evento_sse);
 esperar_evento_sse(HandlerPid, N) ->
