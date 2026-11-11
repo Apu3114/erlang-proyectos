@@ -5,6 +5,8 @@
 **Demo pública:** http://54.227.229.168/app/ (solo disponible si el laboratorio AWS Academy está encendido)  
 **Estado:** HTTP sin autenticación · Datos ficticios · No es un sistema clínico  
 
+**Video de demostración:** consulta el [apartado para el enlace de Loom](#video-de-demostración-en-loom).
+
 ---
 
 ## 1. Introducción
@@ -246,6 +248,12 @@ El estudiante debe tomar capturas de pantalla desde su navegador y pegarlas aqu�
 
 > **Instrucción:** abre la app en `http://54.227.229.168/app/`, navega por cada pestaña y presiona `Pant Pant` o `Win + Shift + S` (Windows) para capturar. No incluyas credenciales, IPs privadas ni datos reales.
 
+### Video de demostración en Loom
+
+**Enlace del video:** **[PEGA AQUÍ TU ENLACE DE LOOM]**
+
+El autor indicó que ya tiene el video. Antes de entregar, reemplaza el texto entre corchetes por la URL completa de Loom y comprueba en una ventana privada del navegador que el profesor pueda verlo. No incluyas claves ni datos personales en la grabación.
+
 ---
 
 ## 7. Prompts usados con OpenCode durante el desarrollo
@@ -341,8 +349,8 @@ Se creó este documento y el Gist asociado.
 
 ## 10. Checklist de entrega
 
-- [ ] Video de Loom grabado y subido (enlace disponible)
-- [ ] Enlace de Loom pegado en el Gist o entrega del profesor
+- [x] Video de Loom preparado (según indica el autor; enlace aún no añadido aquí)
+- [ ] Enlace de Loom pegado en el apartado anterior y acceso verificado
 - [ ] Capturas de la app real tomadas (inventario, lotes, donantes, procesos, bitácora)
 - [ ] Capturas de pruebas (`rebar3 eunit`: 76 pruebas, 0 fallos)
 - [ ] Capturas de simulación y caos (invariantes = ok)
